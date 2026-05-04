@@ -1,0 +1,940 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>n8n CRM + Follow-ups — Lightweight Client Pipeline</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0a0a0f;
+      --surface: #111118;
+      --surface2: #1a1a24;
+      --border: #2a2a3a;
+      --accent: #00e5a0;
+      --accent2: #7c6dff;
+      --text: #e8e8f0;
+      --muted: #7a7a9a;
+      --danger: #ff4d6d;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 17px;
+      line-height: 1.7;
+      overflow-x: hidden;
+    }
+
+    /* ── NOISE TEXTURE OVERLAY ── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.4;
+    }
+
+    /* ── GLOW ORBS ── */
+    .orb {
+      position: fixed;
+      border-radius: 50%;
+      filter: blur(120px);
+      pointer-events: none;
+      z-index: 0;
+    }
+    .orb-1 { width: 600px; height: 600px; background: rgba(0,229,160,0.07); top: -200px; right: -200px; }
+    .orb-2 { width: 500px; height: 500px; background: rgba(124,109,255,0.07); bottom: 10%; left: -150px; }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 1.2rem 2.5rem;
+      background: rgba(10,10,15,0.85);
+      backdrop-filter: blur(16px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      text-decoration: none;
+    }
+    .nav-logo span { color: var(--accent); }
+    .nav-cta {
+      background: var(--accent);
+      color: #000;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.55rem 1.2rem;
+      border-radius: 6px;
+      text-decoration: none;
+      transition: opacity 0.2s;
+    }
+    .nav-cta:hover { opacity: 0.85; }
+
+    /* ── SECTIONS ── */
+    section { position: relative; z-index: 1; }
+
+    .container {
+      max-width: 860px;
+      margin: 0 auto;
+      padding: 0 1.5rem;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      padding: 160px 1.5rem 100px;
+      text-align: center;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: rgba(0,229,160,0.08);
+      border: 1px solid rgba(0,229,160,0.2);
+      color: var(--accent);
+      font-size: 0.78rem;
+      font-weight: 500;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.4rem 1rem;
+      border-radius: 100px;
+      margin-bottom: 2rem;
+    }
+    .badge::before { content: '●'; font-size: 0.5rem; }
+
+    h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(2.4rem, 6vw, 4rem);
+      font-weight: 800;
+      line-height: 1.1;
+      letter-spacing: -0.03em;
+      margin-bottom: 1.5rem;
+      color: #fff;
+    }
+    h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: 1.15rem;
+      color: var(--muted);
+      max-width: 560px;
+      margin: 0 auto 2.5rem;
+      font-weight: 300;
+    }
+
+    .hero-actions {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 3rem;
+    }
+
+    .btn-primary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 0.9rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 30px rgba(0,229,160,0.25);
+    }
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 45px rgba(0,229,160,0.4);
+    }
+
+    .btn-secondary {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: transparent;
+      color: var(--text);
+      font-weight: 500;
+      font-size: 1rem;
+      padding: 0.9rem 2rem;
+      border-radius: 8px;
+      text-decoration: none;
+      border: 1px solid var(--border);
+      transition: border-color 0.2s, color 0.2s;
+    }
+    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
+
+    .hero-proof {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 2rem;
+      flex-wrap: wrap;
+      color: var(--muted);
+      font-size: 0.85rem;
+    }
+    .hero-proof span { display: flex; align-items: center; gap: 0.4rem; }
+    .hero-proof .dot { color: var(--accent); }
+
+    /* ── PAIN SECTION ── */
+    .pain {
+      padding: 80px 0;
+      border-top: 1px solid var(--border);
+    }
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1px;
+      background: var(--border);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .pain-item {
+      background: var(--surface);
+      padding: 2rem;
+      position: relative;
+    }
+    .pain-item::before {
+      content: '✗';
+      color: var(--danger);
+      font-size: 1rem;
+      display: block;
+      margin-bottom: 0.75rem;
+    }
+    .pain-item strong {
+      display: block;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.4rem;
+    }
+    .pain-item p { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
+
+    /* ── SECTION TITLES ── */
+    .section-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 0.75rem;
+    }
+    h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: clamp(1.8rem, 4vw, 2.6rem);
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      color: var(--muted);
+      max-width: 500px;
+      font-weight: 300;
+      margin-bottom: 3rem;
+    }
+
+    /* ── HOW IT WORKS ── */
+    .how { padding: 80px 0; border-top: 1px solid var(--border); }
+
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      position: relative;
+    }
+    .steps::before {
+      content: '';
+      position: absolute;
+      left: 22px;
+      top: 28px;
+      bottom: 28px;
+      width: 1px;
+      background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
+    }
+
+    .step {
+      display: flex;
+      gap: 1.5rem;
+      padding: 1.75rem 0;
+      border-bottom: 1px solid var(--border);
+      align-items: flex-start;
+    }
+    .step:last-child { border-bottom: none; }
+
+    .step-num {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: var(--surface2);
+      border: 1px solid var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 0.85rem;
+      color: var(--accent);
+      flex-shrink: 0;
+      position: relative;
+      z-index: 1;
+    }
+
+    .step-content strong {
+      display: block;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: #fff;
+      font-size: 1.05rem;
+      margin-bottom: 0.3rem;
+    }
+    .step-content p { color: var(--muted); font-size: 0.92rem; }
+
+    /* ── WHAT YOU GET ── */
+    .includes { padding: 80px 0; border-top: 1px solid var(--border); }
+
+    .includes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+    }
+
+    .include-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.5rem;
+      transition: border-color 0.25s;
+    }
+    .include-card:hover { border-color: rgba(0,229,160,0.3); }
+
+    .include-icon {
+      font-size: 1.4rem;
+      margin-bottom: 0.75rem;
+    }
+    .include-card strong {
+      display: block;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+    .include-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
+
+    /* ── PIPELINE VISUAL ── */
+    .pipeline { padding: 80px 0; border-top: 1px solid var(--border); }
+
+    .stages {
+      display: flex;
+      gap: 0;
+      overflow-x: auto;
+      padding-bottom: 1rem;
+    }
+    .stage {
+      flex: 1;
+      min-width: 140px;
+      text-align: center;
+      padding: 1.5rem 1rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      position: relative;
+    }
+    .stage:first-child { border-radius: 10px 0 0 10px; }
+    .stage:last-child { border-radius: 0 10px 10px 0; border-right: 1px solid var(--border); }
+
+    .stage + .stage { border-left: none; }
+
+    .stage-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      margin: 0 auto 0.75rem;
+    }
+    .stage:nth-child(1) .stage-dot { background: var(--muted); }
+    .stage:nth-child(2) .stage-dot { background: #ffd166; }
+    .stage:nth-child(3) .stage-dot { background: var(--accent2); }
+    .stage:nth-child(4) .stage-dot { background: var(--accent); }
+
+    .stage-name {
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #fff;
+      margin-bottom: 0.3rem;
+    }
+    .stage-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
+
+    .arrow-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-top: 1rem;
+    }
+
+    /* ── PRICING ── */
+    .pricing { padding: 80px 0; border-top: 1px solid var(--border); }
+
+    .price-card {
+      background: var(--surface);
+      border: 1px solid var(--accent);
+      border-radius: 16px;
+      padding: 2.5rem;
+      max-width: 480px;
+      margin: 0 auto;
+      box-shadow: 0 0 60px rgba(0,229,160,0.08);
+      position: relative;
+      overflow: hidden;
+    }
+    .price-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+    }
+
+    .price-tag {
+      display: flex;
+      align-items: baseline;
+      gap: 0.3rem;
+      margin-bottom: 0.5rem;
+    }
+    .price-amount {
+      font-family: 'Syne', sans-serif;
+      font-size: 3.5rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+    }
+    .price-currency {
+      font-size: 1.5rem;
+      color: var(--muted);
+      font-weight: 300;
+    }
+    .price-note { color: var(--muted); font-size: 0.85rem; margin-bottom: 2rem; }
+
+    .price-list {
+      list-style: none;
+      margin-bottom: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+    .price-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.75rem;
+      font-size: 0.95rem;
+      color: var(--text);
+    }
+    .price-list li::before {
+      content: '✓';
+      color: var(--accent);
+      font-weight: 700;
+      flex-shrink: 0;
+      margin-top: 0.05rem;
+    }
+
+    .price-cta {
+      display: block;
+      text-align: center;
+      background: var(--accent);
+      color: #000;
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 1rem;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 0 30px rgba(0,229,160,0.25);
+      margin-bottom: 1rem;
+    }
+    .price-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 0 45px rgba(0,229,160,0.4);
+    }
+
+    .price-guarantee {
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--muted);
+    }
+
+    /* ── BUNDLE UPSELL ── */
+    .bundle-upsell {
+      margin-top: 2rem;
+      max-width: 480px;
+      margin-left: auto;
+      margin-right: auto;
+      background: rgba(124,109,255,0.06);
+      border: 1px solid rgba(124,109,255,0.25);
+      border-radius: 10px;
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+    .bundle-upsell-text strong {
+      display: block;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 0.2rem;
+    }
+    .bundle-upsell-text p { font-size: 0.85rem; color: var(--muted); }
+    .bundle-link {
+      background: var(--accent2);
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.85rem;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      text-decoration: none;
+      white-space: nowrap;
+      transition: opacity 0.2s;
+    }
+    .bundle-link:hover { opacity: 0.85; }
+
+    /* ── FAQ ── */
+    .faq { padding: 80px 0; border-top: 1px solid var(--border); }
+
+    .faq-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+
+    details {
+      background: var(--surface);
+    }
+    details + details { border-top: 1px solid var(--border); }
+
+    summary {
+      padding: 1.25rem 1.5rem;
+      cursor: pointer;
+      font-family: 'Syne', sans-serif;
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: #fff;
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      user-select: none;
+    }
+    summary::-webkit-details-marker { display: none; }
+    summary::after {
+      content: '+';
+      color: var(--accent);
+      font-size: 1.2rem;
+      font-weight: 300;
+      transition: transform 0.2s;
+    }
+    details[open] summary::after { transform: rotate(45deg); }
+
+    .faq-answer {
+      padding: 0 1.5rem 1.25rem;
+      color: var(--muted);
+      font-size: 0.92rem;
+      line-height: 1.65;
+    }
+
+    /* ── AUTHOR ── */
+    .author { padding: 80px 0; border-top: 1px solid var(--border); }
+
+    .author-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 2rem 2.5rem;
+      display: flex;
+      gap: 2rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .author-avatar {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: #000;
+      flex-shrink: 0;
+    }
+    .author-info strong {
+      display: block;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: #fff;
+      margin-bottom: 0.25rem;
+    }
+    .author-info .author-title { color: var(--accent); font-size: 0.85rem; margin-bottom: 0.5rem; }
+    .author-info p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
+    .author-companies {
+      display: flex;
+      gap: 0.5rem;
+      margin-top: 0.75rem;
+      flex-wrap: wrap;
+    }
+    .company-tag {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 0.75rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 4px;
+    }
+
+    /* ── FINAL CTA ── */
+    .final-cta {
+      padding: 100px 1.5rem;
+      text-align: center;
+      border-top: 1px solid var(--border);
+    }
+    .final-cta h2 { margin-bottom: 1rem; }
+    .final-cta p { color: var(--muted); margin-bottom: 2.5rem; font-weight: 300; }
+
+    /* ── FOOTER ── */
+    footer {
+      border-top: 1px solid var(--border);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      color: var(--muted);
+      font-size: 0.82rem;
+      position: relative;
+      z-index: 1;
+    }
+    footer a { color: var(--muted); text-decoration: none; }
+    footer a:hover { color: var(--accent); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .hero > * {
+      opacity: 0;
+      animation: fadeUp 0.7s ease forwards;
+    }
+    .hero .badge { animation-delay: 0.1s; }
+    .hero h1 { animation-delay: 0.2s; }
+    .hero .hero-sub { animation-delay: 0.3s; }
+    .hero .hero-actions { animation-delay: 0.4s; }
+    .hero .hero-proof { animation-delay: 0.5s; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 600px) {
+      nav { padding: 1rem 1.25rem; }
+      .author-card { flex-direction: column; }
+      .bundle-upsell { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#">Stackd<span>.</span></a>
+  <a class="nav-cta" href="https://stackd.lemonsqueezy.com/checkout/buy/00d7db55-1e38-406f-ad9b-ab9ebf07c3a7" target="_blank">Get it — €29</a>
+</nav>
+
+<!-- HERO -->
+<section>
+  <div class="hero">
+    <div class="badge">n8n + Google Sheets · No subscriptions</div>
+    <h1>Stop losing clients because you <em>forgot to follow up</em></h1>
+    <p class="hero-sub">A production-ready CRM workflow that tracks every lead, logs every interaction, and sends follow-up emails automatically — while you focus on actual work.</p>
+    <div class="hero-actions">
+      <a href="https://stackd.lemonsqueezy.com/checkout/buy/00d7db55-1e38-406f-ad9b-ab9ebf07c3a7" target="_blank" class="btn-primary">Get the workflow — €29 →</a>
+      <a href="#how-it-works" class="btn-secondary">See how it works</a>
+    </div>
+    <div class="hero-proof">
+      <span><span class="dot">✓</span> One-time payment</span>
+      <span><span class="dot">✓</span> No coding required</span>
+      <span><span class="dot">✓</span> Personal support included</span>
+    </div>
+  </div>
+</section>
+
+<!-- PAIN -->
+<section class="pain">
+  <div class="container">
+    <p class="section-label">Sound familiar?</p>
+    <h2>The real cost of manual follow-ups</h2>
+    <p class="section-sub" style="margin-bottom:2rem">Most deals don't die because the client said no. They die because nobody followed up in time.</p>
+    <div class="pain-grid">
+      <div class="pain-item">
+        <strong>Forgotten leads</strong>
+        <p>A prospect showed interest two weeks ago. You meant to reply. They signed with someone else.</p>
+      </div>
+      <div class="pain-item">
+        <strong>Inconsistent follow-ups</strong>
+        <p>Some clients get chased three times. Others never hear from you again. No system, no predictability.</p>
+      </div>
+      <div class="pain-item">
+        <strong>Expensive CRM tools</strong>
+        <p>HubSpot, Pipedrive, Salesforce — $50–$100/month for features you don't need. Every month.</p>
+      </div>
+      <div class="pain-item">
+        <strong>Spreadsheet chaos</strong>
+        <p>Your pipeline lives in a messy sheet with no automations, no alerts, no real visibility.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="how" id="how-it-works">
+  <div class="container">
+    <p class="section-label">How it works</p>
+    <h2>Add a lead. Everything else is automatic.</h2>
+    <p class="section-sub">Five steps. Zero manual work after setup.</p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+          <strong>Add a new lead to your Google Sheet</strong>
+          <p>Name, email, stage, notes. One row. That's all you do.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+          <strong>n8n detects it automatically</strong>
+          <p>The workflow polls your sheet and picks up new leads without any trigger from you.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+          <strong>Follow-up emails go out on Day 1, 3 and 7</strong>
+          <p>Three professional emails, sent from your own Gmail, on schedule — automatically.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+          <strong>Update the stage when the deal moves</strong>
+          <p>Change the stage to Closed and n8n stops the sequence immediately. No duplicate emails.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">5</div>
+        <div class="step-content">
+          <strong>Check your live Dashboard anytime</strong>
+          <p>A second tab shows your full pipeline at a glance — counts per stage, always up to date.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PIPELINE STAGES -->
+<section class="pipeline">
+  <div class="container">
+    <p class="section-label">Pipeline stages</p>
+    <h2>Your full client pipeline, visualised</h2>
+    <p class="section-sub">Track every deal from first contact to closed — with automated actions at each stage.</p>
+    <div class="stages">
+      <div class="stage">
+        <div class="stage-dot"></div>
+        <div class="stage-name">New</div>
+        <div class="stage-desc">Lead entered. Day 1 email triggered.</div>
+      </div>
+      <div class="stage">
+        <div class="stage-dot"></div>
+        <div class="stage-name">Contacted</div>
+        <div class="stage-desc">First touch made. Day 3 follow-up queued.</div>
+      </div>
+      <div class="stage">
+        <div class="stage-dot"></div>
+        <div class="stage-name">Proposal</div>
+        <div class="stage-desc">Offer sent. Day 7 final touch scheduled.</div>
+      </div>
+      <div class="stage">
+        <div class="stage-dot"></div>
+        <div class="stage-name">Closed</div>
+        <div class="stage-desc">Deal won. Sequence stops automatically.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WHAT'S INCLUDED -->
+<section class="includes">
+  <div class="container">
+    <p class="section-label">What's included</p>
+    <h2>Everything you need to go live</h2>
+    <p class="section-sub">One download. Ready to import and activate in under an hour.</p>
+    <div class="includes-grid">
+      <div class="include-card">
+        <div class="include-icon">⚙️</div>
+        <strong>n8n Workflow (.json)</strong>
+        <p>Import with one click. The full CRM automation, ready to activate.</p>
+      </div>
+      <div class="include-card">
+        <div class="include-icon">📊</div>
+        <strong>Google Sheets CRM Template</strong>
+        <p>Pipeline tab + Dashboard tab. Upload to Drive and connect in minutes.</p>
+      </div>
+      <div class="include-card">
+        <div class="include-icon">✉️</div>
+        <strong>3-Touch Follow-up Sequences</strong>
+        <p>Day 1, Day 3 and Day 7 emails. Edit the copy to match your voice.</p>
+      </div>
+      <div class="include-card">
+        <div class="include-icon">📄</div>
+        <strong>Step-by-step Setup Guide (PDF)</strong>
+        <p>Every configuration step explained clearly. No coding background needed.</p>
+      </div>
+      <div class="include-card">
+        <div class="include-icon">🔄</div>
+        <strong>Lifetime Access + Free Updates</strong>
+        <p>Buy once, use forever. All future improvements included at no extra cost.</p>
+      </div>
+      <div class="include-card">
+        <div class="include-icon">🛠️</div>
+        <strong>Personal Support</strong>
+        <p>If the workflow doesn't run after following the guide, contact me and I'll fix it personally.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing">
+  <div class="container">
+    <p class="section-label" style="text-align:center">Pricing</p>
+    <h2 style="text-align:center;margin-bottom:0.5rem">Simple. One-time. Fair.</h2>
+    <p class="section-sub" style="margin:0 auto 2.5rem;text-align:center">No subscriptions. No monthly fees. Pay once, own it forever.</p>
+
+    <div class="price-card">
+      <div class="price-tag">
+        <span class="price-currency">€</span>
+        <span class="price-amount">29</span>
+      </div>
+      <p class="price-note">One-time payment · Lifetime access · Free updates</p>
+      <ul class="price-list">
+        <li>n8n CRM workflow (.json) — ready to import</li>
+        <li>Google Sheets CRM + Dashboard template</li>
+        <li>Automated follow-ups: Day 1, Day 3, Day 7</li>
+        <li>Step-by-step PDF setup guide</li>
+        <li>Lifetime access + all future updates</li>
+        <li>Personal support — I fix it if it doesn't run</li>
+      </ul>
+      <a href="https://stackd.lemonsqueezy.com/checkout/buy/00d7db55-1e38-406f-ad9b-ab9ebf07c3a7" target="_blank" class="price-cta">Get the CRM Workflow →</a>
+      <p class="price-guarantee">🔒 Instant download after payment · Secure checkout</p>
+    </div>
+
+    <div class="bundle-upsell">
+      <div class="bundle-upsell-text">
+        <strong>Want the full automation stack?</strong>
+        <p>CRM + Email Urgency Classifier + Quote Automator — save €18 vs buying separately.</p>
+      </div>
+      <a href="https://stackd.lemonsqueezy.com/" target="_blank" class="bundle-link">See Bundle — €49</a>
+    </div>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+  <div class="container">
+    <p class="section-label">FAQ</p>
+    <h2>Questions answered</h2>
+    <p class="section-sub">Everything you need to decide with confidence.</p>
+    <div class="faq-list">
+      <details>
+        <summary>Do I need to know how to code?</summary>
+        <div class="faq-answer">No. You import the workflow file into n8n, connect your Google account, and add your first lead. The setup guide walks you through every single step with screenshots.</div>
+      </details>
+      <details>
+        <summary>What tools do I need? Are they free?</summary>
+        <div class="faq-answer">n8n is free and open-source — self-host it with Docker at no cost, or use n8n.cloud from €20/month. Gmail and Google Sheets are free with any Google account. That's everything you need.</div>
+      </details>
+      <details>
+        <summary>How long does setup take?</summary>
+        <div class="faq-answer">Most users are up and running in 30 to 60 minutes on their first setup, including the Google OAuth2 configuration. The guide covers every step.</div>
+      </details>
+      <details>
+        <summary>Can I customise the follow-up emails and pipeline stages?</summary>
+        <div class="faq-answer">Yes. Edit the email copy directly inside n8n. Add or rename pipeline stages by updating the Google Sheet and adjusting one IF node — takes under 5 minutes.</div>
+      </details>
+      <details>
+        <summary>Will it send emails from my own address?</summary>
+        <div class="faq-answer">Yes. All emails go out from your authenticated Gmail account, so they arrive looking like a normal email from you — not from a third-party service.</div>
+      </details>
+      <details>
+        <summary>What if it doesn't work for me?</summary>
+        <div class="faq-answer">If the workflow doesn't run after following the setup guide, contact me directly and I will fix it personally. That's a personal guarantee — not a policy.</div>
+      </details>
+    </div>
+  </div>
+</section>
+
+<!-- AUTHOR -->
+<section class="author">
+  <div class="container">
+    <p class="section-label">Built by</p>
+    <div class="author-card">
+      <div class="author-avatar">PS</div>
+      <div class="author-info">
+        <strong>Paulo Sergio da Silva Junior</strong>
+        <div class="author-title">IT Automation Specialist · 15+ years</div>
+        <p>This isn't a tutorial or a concept — it's a production-ready workflow built to solve a real business problem. I've spent 15+ years automating enterprise systems at scale. Now I build practical tools for freelancers and small businesses who don't need enterprise complexity.</p>
+        <div class="author-companies">
+          <span class="company-tag">IBM</span>
+          <span class="company-tag">Kyndryl</span>
+          <span class="company-tag">Euronext Securities</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FINAL CTA -->
+<section class="final-cta">
+  <p class="section-label">Ready?</p>
+  <h2>Your pipeline won't manage itself.</h2>
+  <p>One-time payment. Up and running today.</p>
+  <a href="https://stackd.lemonsqueezy.com/checkout/buy/00d7db55-1e38-406f-ad9b-ab9ebf07c3a7" target="_blank" class="btn-primary" style="font-size:1.05rem;padding:1rem 2.5rem;">Get the CRM Workflow — €29 →</a>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <p>© 2025 Stackd · Built by <a href="https://linkedin.com/in/paulosilvajr" target="_blank">Paulo Sergio da Silva Junior</a> · <a href="https://stackd.lemonsqueezy.com/" target="_blank">All products</a></p>
+</footer>
+
+</body>
+</html>
