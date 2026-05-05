@@ -1,940 +1,614 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>n8n CRM + Follow-ups — Lightweight Client Pipeline</title>
-  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
-  <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zionoris Technologies</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0A0F1E;
+    --bg2: #0D1F3C;
+    --blue: #60A8E8;
+    --blue-light: #90C4F0;
+    --blue-dark: #378ADD;
+    --text: #FFFFFF;
+    --text-sec: #B8C4D4;
+    --sep: #1E3A5F;
+    --card: #0D1F3C;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
 
-    :root {
-      --bg: #0a0a0f;
-      --surface: #111118;
-      --surface2: #1a1a24;
-      --border: #2a2a3a;
-      --accent: #00e5a0;
-      --accent2: #7c6dff;
-      --text: #e8e8f0;
-      --muted: #7a7a9a;
-      --danger: #ff4d6d;
-    }
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(10,15,30,0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--sep);
+    padding: 0 2rem;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+  }
+  .nav-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+  .nav-logo svg { width: 36px; height: 36px; }
+  .nav-logo-text { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: 0.04em; color: var(--text); }
+  .nav-links { display: flex; gap: 2rem; }
+  .nav-links a {
+    color: var(--text-sec); font-size: 14px; font-weight: 500;
+    cursor: pointer; text-decoration: none;
+    transition: color 0.2s;
+    letter-spacing: 0.03em;
+  }
+  .nav-links a:hover, .nav-links a.active { color: var(--blue-light); }
+  .nav-cta {
+    background: var(--blue); color: #0A0F1E;
+    border: none; border-radius: 6px;
+    padding: 8px 18px; font-size: 13px; font-weight: 600;
+    cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+    transition: background 0.2s, transform 0.1s;
+    letter-spacing: 0.02em;
+  }
+  .nav-cta:hover { background: var(--blue-light); transform: translateY(-1px); }
 
-    html { scroll-behavior: smooth; }
+  .page { display: none; animation: fadeIn 0.35s ease; }
+  .page.active { display: block; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'DM Sans', sans-serif;
-      font-size: 17px;
-      line-height: 1.7;
-      overflow-x: hidden;
-    }
+  /* ===== HOME ===== */
+  .hero {
+    min-height: 88vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    text-align: center; padding: 4rem 2rem;
+    position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 30%, rgba(96,168,232,0.12) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(96,168,232,0.1); border: 1px solid rgba(96,168,232,0.25);
+    border-radius: 100px; padding: 6px 14px;
+    font-size: 12px; font-weight: 500; color: var(--blue-light);
+    letter-spacing: 0.06em; text-transform: uppercase;
+    margin-bottom: 2rem;
+  }
+  .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(2.4rem, 6vw, 4.2rem);
+    font-weight: 800; line-height: 1.1;
+    color: var(--text); max-width: 820px;
+    margin-bottom: 1.5rem; letter-spacing: -0.02em;
+  }
+  .hero h1 span { color: var(--blue); }
+  .hero p {
+    font-size: 1.1rem; color: var(--text-sec); max-width: 580px;
+    line-height: 1.7; margin-bottom: 2.5rem;
+  }
+  .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+  .btn-primary {
+    background: var(--blue); color: #0A0F1E;
+    border: none; border-radius: 7px;
+    padding: 13px 28px; font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+    transition: all 0.2s; letter-spacing: 0.01em;
+  }
+  .btn-primary:hover { background: var(--blue-light); transform: translateY(-2px); }
+  .btn-outline {
+    background: transparent; color: var(--blue-light);
+    border: 1.5px solid var(--sep); border-radius: 7px;
+    padding: 13px 28px; font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+    transition: all 0.2s;
+  }
+  .btn-outline:hover { border-color: var(--blue); color: var(--blue); transform: translateY(-2px); }
 
-    /* ── NOISE TEXTURE OVERLAY ── */
-    body::before {
-      content: '';
-      position: fixed;
-      inset: 0;
-      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-      pointer-events: none;
-      z-index: 0;
-      opacity: 0.4;
-    }
+  .stats {
+    display: grid; grid-template-columns: repeat(3, 1fr);
+    gap: 1px; background: var(--sep);
+    border-top: 1px solid var(--sep); border-bottom: 1px solid var(--sep);
+    margin: 0;
+  }
+  .stat { background: var(--bg); padding: 2.5rem 2rem; text-align: center; }
+  .stat-num {
+    font-family: 'Syne', sans-serif;
+    font-size: 2.8rem; font-weight: 800; color: var(--blue);
+    display: block; line-height: 1;
+  }
+  .stat-label { font-size: 13px; color: var(--text-sec); margin-top: 0.4rem; letter-spacing: 0.04em; }
 
-    /* ── GLOW ORBS ── */
-    .orb {
-      position: fixed;
-      border-radius: 50%;
-      filter: blur(120px);
-      pointer-events: none;
-      z-index: 0;
-    }
-    .orb-1 { width: 600px; height: 600px; background: rgba(0,229,160,0.07); top: -200px; right: -200px; }
-    .orb-2 { width: 500px; height: 500px; background: rgba(124,109,255,0.07); bottom: 10%; left: -150px; }
+  .section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+  .section-label {
+    font-size: 11px; font-weight: 600; letter-spacing: 0.12em;
+    text-transform: uppercase; color: var(--blue);
+    margin-bottom: 0.75rem;
+  }
+  .section-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.6rem);
+    font-weight: 800; color: var(--text);
+    margin-bottom: 1rem; line-height: 1.2;
+  }
+  .section-sub { font-size: 1rem; color: var(--text-sec); max-width: 560px; line-height: 1.7; margin-bottom: 3rem; }
 
-    /* ── NAV ── */
-    nav {
-      position: fixed;
-      top: 0; left: 0; right: 0;
-      z-index: 100;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 1.2rem 2.5rem;
-      background: rgba(10,10,15,0.85);
-      backdrop-filter: blur(16px);
-      border-bottom: 1px solid var(--border);
-    }
-    .nav-logo {
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.1rem;
-      letter-spacing: -0.02em;
-      color: var(--text);
-      text-decoration: none;
-    }
-    .nav-logo span { color: var(--accent); }
-    .nav-cta {
-      background: var(--accent);
-      color: #000;
-      font-weight: 600;
-      font-size: 0.85rem;
-      padding: 0.55rem 1.2rem;
-      border-radius: 6px;
-      text-decoration: none;
-      transition: opacity 0.2s;
-    }
-    .nav-cta:hover { opacity: 0.85; }
+  .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
+  .feature-card {
+    background: var(--card); border: 1px solid var(--sep);
+    border-radius: 12px; padding: 1.75rem;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+  .feature-card:hover { border-color: rgba(96,168,232,0.4); transform: translateY(-3px); }
+  .feature-icon {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: rgba(96,168,232,0.1); border: 1px solid rgba(96,168,232,0.2);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 1.2rem;
+  }
+  .feature-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 0.6rem; }
+  .feature-card p { font-size: 14px; color: var(--text-sec); line-height: 1.6; }
 
-    /* ── SECTIONS ── */
-    section { position: relative; z-index: 1; }
+  .trust-bar {
+    background: var(--card); border-top: 1px solid var(--sep); border-bottom: 1px solid var(--sep);
+    padding: 2rem;
+  }
+  .trust-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+  .trust-item { font-size: 13px; color: var(--text-sec); display: flex; align-items: center; gap: 8px; }
+  .trust-item strong { color: var(--text); }
 
-    .container {
-      max-width: 860px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
+  /* ===== SERVICES ===== */
+  .services-hero { padding: 5rem 2rem 3rem; text-align: center; }
+  .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1100px; margin: 0 auto 3rem; padding: 0 2rem; }
+  .plan-card {
+    background: var(--card); border: 1px solid var(--sep);
+    border-radius: 14px; padding: 2rem; position: relative;
+    transition: border-color 0.2s, transform 0.2s;
+    display: flex; flex-direction: column;
+  }
+  .plan-card:hover { transform: translateY(-4px); border-color: rgba(96,168,232,0.35); }
+  .plan-card.featured { border-color: var(--blue); }
+  .plan-popular {
+    position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
+    background: var(--blue); color: #0A0F1E;
+    font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 4px 14px; border-radius: 100px;
+  }
+  .plan-tier { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-light); margin-bottom: 0.5rem; }
+  .plan-name { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .plan-price { font-size: 2.5rem; font-weight: 700; color: var(--blue); line-height: 1; }
+  .plan-price span { font-size: 15px; color: var(--text-sec); font-weight: 400; }
+  .plan-desc { font-size: 13px; color: var(--text-sec); margin: 1rem 0 1.25rem; line-height: 1.6; }
+  .plan-features { list-style: none; margin-bottom: 1.5rem; flex: 1; }
+  .plan-features li { font-size: 13px; color: var(--text-sec); padding: 6px 0; border-bottom: 1px solid rgba(30,58,95,0.5); display: flex; align-items: flex-start; gap: 8px; }
+  .plan-features li::before { content: ''; width: 16px; height: 16px; min-width: 16px; border-radius: 50%; background: rgba(96,168,232,0.15); border: 1px solid rgba(96,168,232,0.3); display: inline-block; margin-top: 1px; }
+  .plan-btn {
+    width: 100%; padding: 11px; border-radius: 7px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; transition: all 0.2s;
+    text-align: center;
+  }
+  .plan-btn.primary { background: var(--blue); color: #0A0F1E; border: none; }
+  .plan-btn.primary:hover { background: var(--blue-light); }
+  .plan-btn.outline { background: transparent; color: var(--blue-light); border: 1.5px solid var(--sep); }
+  .plan-btn.outline:hover { border-color: var(--blue); color: var(--blue); }
 
-    /* ── HERO ── */
-    .hero {
-      padding: 160px 1.5rem 100px;
-      text-align: center;
-      max-width: 800px;
-      margin: 0 auto;
-    }
+  .process-section { background: var(--card); border-top: 1px solid var(--sep); border-bottom: 1px solid var(--sep); padding: 4rem 2rem; }
+  .process-inner { max-width: 1100px; margin: 0 auto; }
+  .process-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 2.5rem; }
+  .process-step { text-align: center; }
+  .step-num { font-family: 'Syne', sans-serif; font-size: 3rem; font-weight: 800; color: rgba(96,168,232,0.2); line-height: 1; margin-bottom: 0.75rem; }
+  .process-step h4 { font-size: 15px; font-weight: 600; margin-bottom: 0.4rem; }
+  .process-step p { font-size: 13px; color: var(--text-sec); line-height: 1.6; }
 
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: rgba(0,229,160,0.08);
-      border: 1px solid rgba(0,229,160,0.2);
-      color: var(--accent);
-      font-size: 0.78rem;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      padding: 0.4rem 1rem;
-      border-radius: 100px;
-      margin-bottom: 2rem;
-    }
-    .badge::before { content: '●'; font-size: 0.5rem; }
+  /* ===== PRODUCTS ===== */
+  .products-hero { padding: 5rem 2rem 3rem; text-align: center; }
+  .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1100px; margin: 0 auto 2rem; padding: 0 2rem; }
+  .product-card {
+    background: var(--card); border: 1px solid var(--sep);
+    border-radius: 14px; padding: 2rem; position: relative;
+    transition: all 0.2s; display: flex; flex-direction: column;
+  }
+  .product-card:hover { border-color: rgba(96,168,232,0.4); transform: translateY(-4px); }
+  .product-card.bundle {
+    border-color: var(--blue); background: linear-gradient(135deg, #0D1F3C 0%, #0A1830 100%);
+    grid-column: 1 / -1;
+  }
+  .product-badge {
+    display: inline-block; font-size: 11px; font-weight: 700;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 3px 10px; border-radius: 100px;
+    margin-bottom: 1rem;
+  }
+  .badge-new { background: rgba(96,168,232,0.15); color: var(--blue-light); border: 1px solid rgba(96,168,232,0.2); }
+  .badge-bundle { background: var(--blue); color: #0A0F1E; }
+  .product-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+  .product-card h3 { font-family: 'Syne', sans-serif; font-size: 1.2rem; font-weight: 700; margin-bottom: 0.5rem; }
+  .product-card p { font-size: 13px; color: var(--text-sec); line-height: 1.6; flex: 1; margin-bottom: 1.25rem; }
+  .product-price { font-size: 2rem; font-weight: 700; color: var(--blue); margin-bottom: 0.25rem; }
+  .product-old { font-size: 13px; color: var(--text-sec); text-decoration: line-through; }
+  .product-btn {
+    width: 100%; padding: 10px; border-radius: 7px;
+    font-size: 14px; font-weight: 600; cursor: pointer;
+    font-family: 'Space Grotesk', sans-serif; transition: all 0.2s; border: none;
+    background: var(--blue); color: #0A0F1E; margin-top: 1rem;
+  }
+  .product-btn:hover { background: var(--blue-light); }
+  .bundle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
+  .bundle-info h3 { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+  .bundle-info p { font-size: 14px; color: var(--text-sec); line-height: 1.6; margin-bottom: 1rem; }
+  .bundle-includes { list-style: none; }
+  .bundle-includes li { font-size: 13px; color: var(--text-sec); padding: 4px 0; display: flex; align-items: center; gap: 8px; }
+  .bundle-includes li::before { content: '✓'; color: var(--blue); font-weight: 700; font-size: 12px; }
+  .bundle-pricing { text-align: center; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+  .bundle-save { background: rgba(96,168,232,0.1); border: 1px solid rgba(96,168,232,0.2); border-radius: 8px; padding: 0.5rem 1rem; font-size: 13px; color: var(--blue-light); margin-bottom: 0.5rem; }
 
-    h1 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(2.4rem, 6vw, 4rem);
-      font-weight: 800;
-      line-height: 1.1;
-      letter-spacing: -0.03em;
-      margin-bottom: 1.5rem;
-      color: #fff;
-    }
-    h1 em {
-      font-style: normal;
-      color: var(--accent);
-    }
+  /* ===== CONTACT ===== */
+  .contact-section { padding: 5rem 2rem; max-width: 900px; margin: 0 auto; }
+  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 3rem; }
+  .contact-info h3 { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; }
+  .contact-info p { font-size: 14px; color: var(--text-sec); line-height: 1.7; margin-bottom: 1.5rem; }
+  .contact-link {
+    display: flex; align-items: center; gap: 10px;
+    padding: 12px 16px; border-radius: 8px;
+    background: var(--card); border: 1px solid var(--sep);
+    text-decoration: none; color: var(--text);
+    font-size: 14px; font-weight: 500; margin-bottom: 0.75rem;
+    transition: border-color 0.2s;
+  }
+  .contact-link:hover { border-color: var(--blue); color: var(--blue-light); }
+  .contact-link-icon { width: 32px; height: 32px; border-radius: 7px; background: rgba(96,168,232,0.1); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group label { font-size: 13px; font-weight: 500; color: var(--text-sec); }
+  .form-group input, .form-group textarea, .form-group select {
+    background: var(--card); border: 1px solid var(--sep);
+    border-radius: 7px; padding: 10px 14px;
+    color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 14px;
+    outline: none; transition: border-color 0.2s;
+    width: 100%;
+  }
+  .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--blue); }
+  .form-group textarea { resize: vertical; min-height: 100px; }
+  .form-group select option { background: #0D1F3C; }
+  .form-submit {
+    background: var(--blue); color: #0A0F1E;
+    border: none; border-radius: 7px;
+    padding: 13px; font-size: 15px; font-weight: 600;
+    cursor: pointer; font-family: 'Space Grotesk', sans-serif;
+    transition: all 0.2s;
+  }
+  .form-submit:hover { background: var(--blue-light); transform: translateY(-1px); }
 
-    .hero-sub {
-      font-size: 1.15rem;
-      color: var(--muted);
-      max-width: 560px;
-      margin: 0 auto 2.5rem;
-      font-weight: 300;
-    }
+  footer {
+    background: var(--card); border-top: 1px solid var(--sep);
+    padding: 2.5rem 2rem; text-align: center;
+  }
+  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
+  .footer-logo { display: flex; align-items: center; gap: 8px; }
+  .footer-logo span { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; color: var(--text); }
+  .footer-links { display: flex; gap: 1.5rem; }
+  .footer-links a { font-size: 13px; color: var(--text-sec); cursor: pointer; text-decoration: none; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--blue-light); }
+  .footer-copy { font-size: 12px; color: var(--text-sec); }
+</style>
 
-    .hero-actions {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
-      flex-wrap: wrap;
-      margin-bottom: 3rem;
-    }
-
-    .btn-primary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: var(--accent);
-      color: #000;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 0.9rem 2rem;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 0 30px rgba(0,229,160,0.25);
-    }
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 45px rgba(0,229,160,0.4);
-    }
-
-    .btn-secondary {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      background: transparent;
-      color: var(--text);
-      font-weight: 500;
-      font-size: 1rem;
-      padding: 0.9rem 2rem;
-      border-radius: 8px;
-      text-decoration: none;
-      border: 1px solid var(--border);
-      transition: border-color 0.2s, color 0.2s;
-    }
-    .btn-secondary:hover { border-color: var(--accent); color: var(--accent); }
-
-    .hero-proof {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 2rem;
-      flex-wrap: wrap;
-      color: var(--muted);
-      font-size: 0.85rem;
-    }
-    .hero-proof span { display: flex; align-items: center; gap: 0.4rem; }
-    .hero-proof .dot { color: var(--accent); }
-
-    /* ── PAIN SECTION ── */
-    .pain {
-      padding: 80px 0;
-      border-top: 1px solid var(--border);
-    }
-    .pain-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
-    .pain-item {
-      background: var(--surface);
-      padding: 2rem;
-      position: relative;
-    }
-    .pain-item::before {
-      content: '✗';
-      color: var(--danger);
-      font-size: 1rem;
-      display: block;
-      margin-bottom: 0.75rem;
-    }
-    .pain-item strong {
-      display: block;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 0.4rem;
-    }
-    .pain-item p { color: var(--muted); font-size: 0.9rem; line-height: 1.5; }
-
-    /* ── SECTION TITLES ── */
-    .section-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      letter-spacing: 0.12em;
-      text-transform: uppercase;
-      color: var(--accent);
-      margin-bottom: 0.75rem;
-    }
-    h2 {
-      font-family: 'Syne', sans-serif;
-      font-size: clamp(1.8rem, 4vw, 2.6rem);
-      font-weight: 800;
-      letter-spacing: -0.03em;
-      color: #fff;
-      line-height: 1.15;
-      margin-bottom: 1rem;
-    }
-    .section-sub {
-      color: var(--muted);
-      max-width: 500px;
-      font-weight: 300;
-      margin-bottom: 3rem;
-    }
-
-    /* ── HOW IT WORKS ── */
-    .how { padding: 80px 0; border-top: 1px solid var(--border); }
-
-    .steps {
-      display: flex;
-      flex-direction: column;
-      gap: 0;
-      position: relative;
-    }
-    .steps::before {
-      content: '';
-      position: absolute;
-      left: 22px;
-      top: 28px;
-      bottom: 28px;
-      width: 1px;
-      background: linear-gradient(to bottom, var(--accent), var(--accent2), transparent);
-    }
-
-    .step {
-      display: flex;
-      gap: 1.5rem;
-      padding: 1.75rem 0;
-      border-bottom: 1px solid var(--border);
-      align-items: flex-start;
-    }
-    .step:last-child { border-bottom: none; }
-
-    .step-num {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: var(--surface2);
-      border: 1px solid var(--accent);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 0.85rem;
-      color: var(--accent);
-      flex-shrink: 0;
-      position: relative;
-      z-index: 1;
-    }
-
-    .step-content strong {
-      display: block;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      color: #fff;
-      font-size: 1.05rem;
-      margin-bottom: 0.3rem;
-    }
-    .step-content p { color: var(--muted); font-size: 0.92rem; }
-
-    /* ── WHAT YOU GET ── */
-    .includes { padding: 80px 0; border-top: 1px solid var(--border); }
-
-    .includes-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-      gap: 1rem;
-    }
-
-    .include-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 1.5rem;
-      transition: border-color 0.25s;
-    }
-    .include-card:hover { border-color: rgba(0,229,160,0.3); }
-
-    .include-icon {
-      font-size: 1.4rem;
-      margin-bottom: 0.75rem;
-    }
-    .include-card strong {
-      display: block;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 0.3rem;
-    }
-    .include-card p { color: var(--muted); font-size: 0.88rem; line-height: 1.5; }
-
-    /* ── PIPELINE VISUAL ── */
-    .pipeline { padding: 80px 0; border-top: 1px solid var(--border); }
-
-    .stages {
-      display: flex;
-      gap: 0;
-      overflow-x: auto;
-      padding-bottom: 1rem;
-    }
-    .stage {
-      flex: 1;
-      min-width: 140px;
-      text-align: center;
-      padding: 1.5rem 1rem;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      position: relative;
-    }
-    .stage:first-child { border-radius: 10px 0 0 10px; }
-    .stage:last-child { border-radius: 0 10px 10px 0; border-right: 1px solid var(--border); }
-
-    .stage + .stage { border-left: none; }
-
-    .stage-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      margin: 0 auto 0.75rem;
-    }
-    .stage:nth-child(1) .stage-dot { background: var(--muted); }
-    .stage:nth-child(2) .stage-dot { background: #ffd166; }
-    .stage:nth-child(3) .stage-dot { background: var(--accent2); }
-    .stage:nth-child(4) .stage-dot { background: var(--accent); }
-
-    .stage-name {
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 0.85rem;
-      color: #fff;
-      margin-bottom: 0.3rem;
-    }
-    .stage-desc { font-size: 0.78rem; color: var(--muted); line-height: 1.4; }
-
-    .arrow-row {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0;
-      margin-top: 1rem;
-    }
-
-    /* ── PRICING ── */
-    .pricing { padding: 80px 0; border-top: 1px solid var(--border); }
-
-    .price-card {
-      background: var(--surface);
-      border: 1px solid var(--accent);
-      border-radius: 16px;
-      padding: 2.5rem;
-      max-width: 480px;
-      margin: 0 auto;
-      box-shadow: 0 0 60px rgba(0,229,160,0.08);
-      position: relative;
-      overflow: hidden;
-    }
-    .price-card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      background: linear-gradient(90deg, var(--accent), var(--accent2));
-    }
-
-    .price-tag {
-      display: flex;
-      align-items: baseline;
-      gap: 0.3rem;
-      margin-bottom: 0.5rem;
-    }
-    .price-amount {
-      font-family: 'Syne', sans-serif;
-      font-size: 3.5rem;
-      font-weight: 800;
-      color: #fff;
-      line-height: 1;
-    }
-    .price-currency {
-      font-size: 1.5rem;
-      color: var(--muted);
-      font-weight: 300;
-    }
-    .price-note { color: var(--muted); font-size: 0.85rem; margin-bottom: 2rem; }
-
-    .price-list {
-      list-style: none;
-      margin-bottom: 2rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-    }
-    .price-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.75rem;
-      font-size: 0.95rem;
-      color: var(--text);
-    }
-    .price-list li::before {
-      content: '✓';
-      color: var(--accent);
-      font-weight: 700;
-      flex-shrink: 0;
-      margin-top: 0.05rem;
-    }
-
-    .price-cta {
-      display: block;
-      text-align: center;
-      background: var(--accent);
-      color: #000;
-      font-weight: 700;
-      font-size: 1rem;
-      padding: 1rem;
-      border-radius: 8px;
-      text-decoration: none;
-      transition: transform 0.2s, box-shadow 0.2s;
-      box-shadow: 0 0 30px rgba(0,229,160,0.25);
-      margin-bottom: 1rem;
-    }
-    .price-cta:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 0 45px rgba(0,229,160,0.4);
-    }
-
-    .price-guarantee {
-      text-align: center;
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-
-    /* ── BUNDLE UPSELL ── */
-    .bundle-upsell {
-      margin-top: 2rem;
-      max-width: 480px;
-      margin-left: auto;
-      margin-right: auto;
-      background: rgba(124,109,255,0.06);
-      border: 1px solid rgba(124,109,255,0.25);
-      border-radius: 10px;
-      padding: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-    .bundle-upsell-text strong {
-      display: block;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 0.2rem;
-    }
-    .bundle-upsell-text p { font-size: 0.85rem; color: var(--muted); }
-    .bundle-link {
-      background: var(--accent2);
-      color: #fff;
-      font-weight: 600;
-      font-size: 0.85rem;
-      padding: 0.6rem 1.2rem;
-      border-radius: 6px;
-      text-decoration: none;
-      white-space: nowrap;
-      transition: opacity 0.2s;
-    }
-    .bundle-link:hover { opacity: 0.85; }
-
-    /* ── FAQ ── */
-    .faq { padding: 80px 0; border-top: 1px solid var(--border); }
-
-    .faq-list { display: flex; flex-direction: column; gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-
-    details {
-      background: var(--surface);
-    }
-    details + details { border-top: 1px solid var(--border); }
-
-    summary {
-      padding: 1.25rem 1.5rem;
-      cursor: pointer;
-      font-family: 'Syne', sans-serif;
-      font-weight: 600;
-      font-size: 0.95rem;
-      color: #fff;
-      list-style: none;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      user-select: none;
-    }
-    summary::-webkit-details-marker { display: none; }
-    summary::after {
-      content: '+';
-      color: var(--accent);
-      font-size: 1.2rem;
-      font-weight: 300;
-      transition: transform 0.2s;
-    }
-    details[open] summary::after { transform: rotate(45deg); }
-
-    .faq-answer {
-      padding: 0 1.5rem 1.25rem;
-      color: var(--muted);
-      font-size: 0.92rem;
-      line-height: 1.65;
-    }
-
-    /* ── AUTHOR ── */
-    .author { padding: 80px 0; border-top: 1px solid var(--border); }
-
-    .author-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 2rem 2.5rem;
-      display: flex;
-      gap: 2rem;
-      align-items: center;
-      flex-wrap: wrap;
-    }
-    .author-avatar {
-      width: 72px;
-      height: 72px;
-      border-radius: 50%;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-family: 'Syne', sans-serif;
-      font-weight: 800;
-      font-size: 1.4rem;
-      color: #000;
-      flex-shrink: 0;
-    }
-    .author-info strong {
-      display: block;
-      font-family: 'Syne', sans-serif;
-      font-weight: 700;
-      font-size: 1.1rem;
-      color: #fff;
-      margin-bottom: 0.25rem;
-    }
-    .author-info .author-title { color: var(--accent); font-size: 0.85rem; margin-bottom: 0.5rem; }
-    .author-info p { color: var(--muted); font-size: 0.9rem; line-height: 1.6; }
-    .author-companies {
-      display: flex;
-      gap: 0.5rem;
-      margin-top: 0.75rem;
-      flex-wrap: wrap;
-    }
-    .company-tag {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      color: var(--muted);
-      font-size: 0.75rem;
-      padding: 0.2rem 0.6rem;
-      border-radius: 4px;
-    }
-
-    /* ── FINAL CTA ── */
-    .final-cta {
-      padding: 100px 1.5rem;
-      text-align: center;
-      border-top: 1px solid var(--border);
-    }
-    .final-cta h2 { margin-bottom: 1rem; }
-    .final-cta p { color: var(--muted); margin-bottom: 2.5rem; font-weight: 300; }
-
-    /* ── FOOTER ── */
-    footer {
-      border-top: 1px solid var(--border);
-      padding: 2rem 1.5rem;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.82rem;
-      position: relative;
-      z-index: 1;
-    }
-    footer a { color: var(--muted); text-decoration: none; }
-    footer a:hover { color: var(--accent); }
-
-    /* ── ANIMATIONS ── */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .hero > * {
-      opacity: 0;
-      animation: fadeUp 0.7s ease forwards;
-    }
-    .hero .badge { animation-delay: 0.1s; }
-    .hero h1 { animation-delay: 0.2s; }
-    .hero .hero-sub { animation-delay: 0.3s; }
-    .hero .hero-actions { animation-delay: 0.4s; }
-    .hero .hero-proof { animation-delay: 0.5s; }
-
-    /* ── RESPONSIVE ── */
-    @media (max-width: 600px) {
-      nav { padding: 1rem 1.25rem; }
-      .author-card { flex-direction: column; }
-      .bundle-upsell { flex-direction: column; }
-    }
-  </style>
-</head>
-<body>
-
-<div class="orb orb-1"></div>
-<div class="orb orb-2"></div>
-
-<!-- NAV -->
 <nav>
-  <a class="nav-logo" href="#">Stackd<span>.</span></a>
-  <a class="nav-cta" href="https://stackd.lemonsqueezy.com/checkout/buy/00d7db55-1e38-406f-ad9b-ab9ebf07c3a7" target="_blank">Get it — 29</a>
+  <div class="nav-logo" onclick="showPage('home')">
+    <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <polygon points="18,2 34,32 2,32" fill="none" stroke="#60A8E8" stroke-width="2.5"/>
+      <polygon points="18,9 29,30 7,30" fill="rgba(96,168,232,0.18)" stroke="#90C4F0" stroke-width="1.5"/>
+    </svg>
+    <span class="nav-logo-text">ZIONORIS</span>
+  </div>
+  <div class="nav-links">
+    <a onclick="showPage('home')" id="nav-home" class="active">Home</a>
+    <a onclick="showPage('services')" id="nav-services">Services</a>
+    <a onclick="showPage('products')" id="nav-products">Products</a>
+    <a onclick="showPage('contact')" id="nav-contact">Contact</a>
+  </div>
+  <button class="nav-cta" onclick="showPage('contact')">Get a Quote →</button>
 </nav>
 
-<!-- HERO -->
-<section>
-  <div class="hero">
-    <div class="badge">n8n + Google Sheets · No subscriptions</div>
-    <h1>Stop losing clients because you <em>forgot to follow up</em></h1>
-    <p class="hero-sub">A production-ready CRM workflow that tracks every lead, logs every interaction, and sends follow-up emails automatically — while you focus on actual work.</p>
-    <div class="hero-actions">
-      <a href="https://stackd.lemonsqueezy.com/checkout/buy/00d7db55-1e38-406f-ad9b-ab9ebf07c3a7" target="_blank" class="btn-primary">Get the workflow — €29 →</a>
-      <a href="#how-it-works" class="btn-secondary">See how it works</a>
+<!-- HOME PAGE -->
+<div id="page-home" class="page active">
+  <section class="hero">
+    <div class="hero-badge">n8n Automation Specialist</div>
+    <h1>Workflows that run.<br><span>Unattended.</span> Reliably.</h1>
+    <p>Enterprise-grade automation built for small and mid-size businesses. 20 years of IBM, Kyndryl, and Euronext reliability — without the enterprise price tag.</p>
+    <div class="hero-btns">
+      <button class="btn-primary" onclick="showPage('services')">Explore Services</button>
+      <button class="btn-outline" onclick="showPage('products')">Browse Digital Products</button>
     </div>
-    <div class="hero-proof">
-      <span><span class="dot">✓</span> One-time payment</span>
-      <span><span class="dot">✓</span> No coding required</span>
-      <span><span class="dot">✓</span> Personal support included</span>
+  </section>
+
+  <div class="stats">
+    <div class="stat"><span class="stat-num">20+</span><p class="stat-label">Years Enterprise IT</p></div>
+    <div class="stat"><span class="stat-num">3</span><p class="stat-label">Digital Products Ready</p></div>
+    <div class="stat"><span class="stat-num">∞</span><p class="stat-label">Workflows That Don't Break</p></div>
+  </div>
+
+  <section class="section">
+    <p class="section-label">What We Do</p>
+    <h2 class="section-title">Automation that handles errors<br>and scales with you</h2>
+    <p class="section-sub">Most automation breaks under real conditions. We build systems that don't — tested, documented, and ready to run on their own.</p>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+        </div>
+        <h3>CRM Pipelines</h3>
+        <p>Automated lead tracking, client onboarding, and follow-up sequences. No more forgotten enquiries.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M8 2v4m8-4v4M2 10h20"/></svg>
+        </div>
+        <h3>Email Classification</h3>
+        <p>AI-powered inbox sorting that routes urgent requests, quotes, and enquiries automatically.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>
+        </div>
+        <h3>API Integrations</h3>
+        <p>Connect your existing tools — CRMs, spreadsheets, Slack, email, webhooks — into one seamless flow.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+        </div>
+        <h3>n8n Workflows</h3>
+        <p>Built on n8n — open source, self-hostable, and battle-tested. No vendor lock-in, no black boxes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Error Handling</h3>
+        <p>Every workflow includes retry logic, error notifications, and graceful fallbacks. It runs or it tells you why.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <h3>Full Documentation</h3>
+        <p>Every delivery comes with written documentation so your team can maintain, adapt, and build on it.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="trust-bar">
+    <div class="trust-inner">
+      <div class="trust-item"><strong>IBM</strong> <span>· Former engineer</span></div>
+      <div class="trust-item"><strong>Kyndryl</strong> <span>· IT infrastructure</span></div>
+      <div class="trust-item"><strong>Euronext Securities</strong> <span>· Capital markets</span></div>
+      <div class="trust-item"><strong>n8n</strong> <span>· Certified workflows</span></div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- PAIN -->
-<section class="pain">
-  <div class="container">
-    <p class="section-label">Sound familiar?</p>
-    <h2>The real cost of manual follow-ups</h2>
-    <p class="section-sub" style="margin-bottom:2rem">Most deals don't die because the client said no. They die because nobody followed up in time.</p>
-    <div class="pain-grid">
-      <div class="pain-item">
-        <strong>Forgotten leads</strong>
-        <p>A prospect showed interest two weeks ago. You meant to reply. They signed with someone else.</p>
-      </div>
-      <div class="pain-item">
-        <strong>Inconsistent follow-ups</strong>
-        <p>Some clients get chased three times. Others never hear from you again. No system, no predictability.</p>
-      </div>
-      <div class="pain-item">
-        <strong>Expensive CRM tools</strong>
-        <p>HubSpot, Pipedrive, Salesforce — $50–$100/month for features you don't need. Every month.</p>
-      </div>
-      <div class="pain-item">
-        <strong>Spreadsheet chaos</strong>
-        <p>Your pipeline lives in a messy sheet with no automations, no alerts, no real visibility.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="how" id="how-it-works">
-  <div class="container">
-    <p class="section-label">How it works</p>
-    <h2>Add a lead. Everything else is automatic.</h2>
-    <p class="section-sub">Five steps. Zero manual work after setup.</p>
-    <div class="steps">
-      <div class="step">
-        <div class="step-num">1</div>
-        <div class="step-content">
-          <strong>Add a new lead to your Google Sheet</strong>
-          <p>Name, email, stage, notes. One row. That's all you do.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">2</div>
-        <div class="step-content">
-          <strong>n8n detects it automatically</strong>
-          <p>The workflow polls your sheet and picks up new leads without any trigger from you.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">3</div>
-        <div class="step-content">
-          <strong>Follow-up emails go out on Day 1, 3 and 7</strong>
-          <p>Three professional emails, sent from your own Gmail, on schedule — automatically.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div class="step-content">
-          <strong>Update the stage when the deal moves</strong>
-          <p>Change the stage to Closed and n8n stops the sequence immediately. No duplicate emails.</p>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">5</div>
-        <div class="step-content">
-          <strong>Check your live Dashboard anytime</strong>
-          <p>A second tab shows your full pipeline at a glance — counts per stage, always up to date.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PIPELINE STAGES -->
-<section class="pipeline">
-  <div class="container">
-    <p class="section-label">Pipeline stages</p>
-    <h2>Your full client pipeline, visualised</h2>
-    <p class="section-sub">Track every deal from first contact to closed — with automated actions at each stage.</p>
-    <div class="stages">
-      <div class="stage">
-        <div class="stage-dot"></div>
-        <div class="stage-name">New</div>
-        <div class="stage-desc">Lead entered. Day 1 email triggered.</div>
-      </div>
-      <div class="stage">
-        <div class="stage-dot"></div>
-        <div class="stage-name">Contacted</div>
-        <div class="stage-desc">First touch made. Day 3 follow-up queued.</div>
-      </div>
-      <div class="stage">
-        <div class="stage-dot"></div>
-        <div class="stage-name">Proposal</div>
-        <div class="stage-desc">Offer sent. Day 7 final touch scheduled.</div>
-      </div>
-      <div class="stage">
-        <div class="stage-dot"></div>
-        <div class="stage-name">Closed</div>
-        <div class="stage-desc">Deal won. Sequence stops automatically.</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- WHAT'S INCLUDED -->
-<section class="includes">
-  <div class="container">
-    <p class="section-label">What's included</p>
-    <h2>Everything you need to go live</h2>
-    <p class="section-sub">One download. Ready to import and activate in under an hour.</p>
-    <div class="includes-grid">
-      <div class="include-card">
-        <div class="include-icon">⚙️</div>
-        <strong>n8n Workflow (.json)</strong>
-        <p>Import with one click. The full CRM automation, ready to activate.</p>
-      </div>
-      <div class="include-card">
-        <div class="include-icon">📊</div>
-        <strong>Google Sheets CRM Template</strong>
-        <p>Pipeline tab + Dashboard tab. Upload to Drive and connect in minutes.</p>
-      </div>
-      <div class="include-card">
-        <div class="include-icon">✉️</div>
-        <strong>3-Touch Follow-up Sequences</strong>
-        <p>Day 1, Day 3 and Day 7 emails. Edit the copy to match your voice.</p>
-      </div>
-      <div class="include-card">
-        <div class="include-icon">📄</div>
-        <strong>Step-by-step Setup Guide (PDF)</strong>
-        <p>Every configuration step explained clearly. No coding background needed.</p>
-      </div>
-      <div class="include-card">
-        <div class="include-icon">🔄</div>
-        <strong>Lifetime Access + Free Updates</strong>
-        <p>Buy once, use forever. All future improvements included at no extra cost.</p>
-      </div>
-      <div class="include-card">
-        <div class="include-icon">🛠️</div>
-        <strong>Personal Support</strong>
-        <p>If the workflow doesn't run after following the guide, contact me and I'll fix it personally.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- PRICING -->
-<section class="pricing">
-  <div class="container">
-    <p class="section-label" style="text-align:center">Pricing</p>
-    <h2 style="text-align:center;margin-bottom:0.5rem">Simple. One-time. Fair.</h2>
-    <p class="section-sub" style="margin:0 auto 2.5rem;text-align:center">No subscriptions. No monthly fees. Pay once, own it forever.</p>
-
-    <div class="price-card">
-      <div class="price-tag">
-        <span class="price-currency">€</span>
-        <span class="price-amount">29</span>
-      </div>
-      <p class="price-note">One-time payment · Lifetime access · Free updates</p>
-      <ul class="price-list">
-        <li>n8n CRM workflow (.json) — ready to import</li>
-        <li>Google Sheets CRM + Dashboard template</li>
-        <li>Automated follow-ups: Day 1, Day 3, Day 7</li>
-        <li>Step-by-step PDF setup guide</li>
-        <li>Lifetime access + all future updates</li>
-        <li>Personal support — I fix it if it doesn't run</li>
+<!-- SERVICES PAGE -->
+<div id="page-services" class="page">
+  <section class="services-hero">
+    <p class="section-label" style="text-align:center">Fiverr-ready packages</p>
+    <h2 class="section-title" style="text-align:center;margin:0 auto 1rem">Choose your automation tier</h2>
+    <p style="text-align:center;color:var(--text-sec);font-size:1rem;max-width:520px;margin:0 auto 3rem;line-height:1.7">From a single workflow to a full automation system. All packages include documentation and error handling.</p>
+  </section>
+  <div class="plans-grid">
+    <div class="plan-card">
+      <p class="plan-tier">Starter</p>
+      <h3 class="plan-name">Basic</h3>
+      <div class="plan-price">€40 <span>/ project</span></div>
+      <p class="plan-desc">Perfect for automating one specific task or connecting two tools you already use.</p>
+      <ul class="plan-features">
+        <li>1 n8n workflow</li>
+        <li>Up to 2 integrations</li>
+        <li>Basic error handling</li>
+        <li>5-day delivery</li>
+        <li>1 revision included</li>
       </ul>
-      <a href="https://stackd.lemonsqueezy.com/checkout/buy/00d7db55-1e38-406f-ad9b-ab9ebf07c3a7" target="_blank" class="price-cta">Get the CRM Workflow →</a>
-      <p class="price-guarantee">🔒 Instant download after payment · Secure checkout</p>
+      <button class="plan-btn outline" onclick="openFiverr()">Order on Fiverr →</button>
     </div>
-
-    <div class="bundle-upsell">
-      <div class="bundle-upsell-text">
-        <strong>Want the full automation stack?</strong>
-        <p>CRM + Email Urgency Classifier + Quote Automator — save €18 vs buying separately.</p>
-      </div>
-      <a href="https://stackd.lemonsqueezy.com/" target="_blank" class="bundle-link">See Bundle — €49</a>
+    <div class="plan-card featured">
+      <div class="plan-popular">Most Popular</div>
+      <p class="plan-tier">Business</p>
+      <h3 class="plan-name">Standard</h3>
+      <div class="plan-price">€107 <span>/ project</span></div>
+      <p class="plan-desc">Multi-tool automation with AI capabilities. Ideal for CRM flows, lead management, and email processing.</p>
+      <ul class="plan-features">
+        <li>2–3 integrated tools</li>
+        <li>AI nodes (OpenAI, etc.)</li>
+        <li>Full error handling & retries</li>
+        <li>7-day delivery</li>
+        <li>2 revisions included</li>
+        <li>Written documentation</li>
+      </ul>
+      <button class="plan-btn primary" onclick="openFiverr()">Order on Fiverr →</button>
     </div>
-  </div>
-</section>
-
-<!-- FAQ -->
-<section class="faq">
-  <div class="container">
-    <p class="section-label">FAQ</p>
-    <h2>Questions answered</h2>
-    <p class="section-sub">Everything you need to decide with confidence.</p>
-    <div class="faq-list">
-      <details>
-        <summary>Do I need to know how to code?</summary>
-        <div class="faq-answer">No. You import the workflow file into n8n, connect your Google account, and add your first lead. The setup guide walks you through every single step with screenshots.</div>
-      </details>
-      <details>
-        <summary>What tools do I need? Are they free?</summary>
-        <div class="faq-answer">n8n is free and open-source — self-host it with Docker at no cost, or use n8n.cloud from €20/month. Gmail and Google Sheets are free with any Google account. That's everything you need.</div>
-      </details>
-      <details>
-        <summary>How long does setup take?</summary>
-        <div class="faq-answer">Most users are up and running in 30 to 60 minutes on their first setup, including the Google OAuth2 configuration. The guide covers every step.</div>
-      </details>
-      <details>
-        <summary>Can I customise the follow-up emails and pipeline stages?</summary>
-        <div class="faq-answer">Yes. Edit the email copy directly inside n8n. Add or rename pipeline stages by updating the Google Sheet and adjusting one IF node — takes under 5 minutes.</div>
-      </details>
-      <details>
-        <summary>Will it send emails from my own address?</summary>
-        <div class="faq-answer">Yes. All emails go out from your authenticated Gmail account, so they arrive looking like a normal email from you — not from a third-party service.</div>
-      </details>
-      <details>
-        <summary>What if it doesn't work for me?</summary>
-        <div class="faq-answer">If the workflow doesn't run after following the setup guide, contact me directly and I will fix it personally. That's a personal guarantee — not a policy.</div>
-      </details>
+    <div class="plan-card">
+      <p class="plan-tier">Enterprise-grade</p>
+      <h3 class="plan-name">Premium</h3>
+      <div class="plan-price">€224 <span>/ project</span></div>
+      <p class="plan-desc">End-to-end automation systems. Complex multi-step workflows, custom API integrations, and full deployment support.</p>
+      <ul class="plan-features">
+        <li>Complex multi-step workflows</li>
+        <li>Custom API integrations</li>
+        <li>Deployment support</li>
+        <li>14-day delivery</li>
+        <li>Unlimited revisions</li>
+        <li>Full documentation + handoff call</li>
+      </ul>
+      <button class="plan-btn outline" onclick="openFiverr()">Order on Fiverr →</button>
     </div>
   </div>
-</section>
 
-<!-- AUTHOR -->
-<section class="author">
-  <div class="container">
-    <p class="section-label">Built by</p>
-    <div class="author-card">
-      <div class="author-avatar">PS</div>
-      <div class="author-info">
-        <strong>Paulo Sergio da Silva Junior</strong>
-        <div class="author-title">IT Automation Specialist · 15+ years</div>
-        <p>This isn't a tutorial or a concept — it's a production-ready workflow built to solve a real business problem. I've spent 15+ years automating enterprise systems at scale. Now I build practical tools for freelancers and small businesses who don't need enterprise complexity.</p>
-        <div class="author-companies">
-          <span class="company-tag">IBM</span>
-          <span class="company-tag">Kyndryl</span>
-          <span class="company-tag">Euronext Securities</span>
+  <div class="process-section">
+    <div class="process-inner">
+      <p class="section-label">How it works</p>
+      <h2 class="section-title">From brief to running workflow</h2>
+      <div class="process-steps">
+        <div class="process-step">
+          <div class="step-num">01</div>
+          <h4>Discovery</h4>
+          <p>We clarify the workflow requirements, your existing tools, and the expected output.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">02</div>
+          <h4>Build</h4>
+          <p>The workflow is built in n8n with error handling, retries, and proper data mapping.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">03</div>
+          <h4>Test</h4>
+          <p>Every path is tested — including edge cases and error scenarios — before delivery.</p>
+        </div>
+        <div class="process-step">
+          <div class="step-num">04</div>
+          <h4>Handoff</h4>
+          <p>You receive the workflow file, documentation, and setup instructions. It runs on your instance.</p>
         </div>
       </div>
     </div>
   </div>
-</section>
+</div>
 
-<!-- FINAL CTA -->
-<section class="final-cta">
-  <p class="section-label">Ready?</p>
-  <h2>Your pipeline won't manage itself.</h2>
-  <p>One-time payment. Up and running today.</p>
-  <a href="https://stackd.lemonsqueezy.com/checkout/buy/00d7db55-1e38-406f-ad9b-ab9ebf07c3a7" target="_blank" class="btn-primary" style="font-size:1.05rem;padding:1rem 2.5rem;">Get the CRM Workflow — €29 →</a>
-</section>
+<!-- PRODUCTS PAGE -->
+<div id="page-products" class="page">
+  <section class="products-hero">
+    <p class="section-label" style="text-align:center">Ready-to-deploy templates</p>
+    <h2 class="section-title" style="text-align:center;margin:0 auto 1rem">Digital automation products</h2>
+    <p style="text-align:center;color:var(--text-sec);font-size:1rem;max-width:520px;margin:0 auto 3rem;line-height:1.7">Pre-built n8n workflows ready to import, configure, and run. No development needed.</p>
+  </section>
+  <div class="products-grid">
+    <div class="product-card">
+      <span class="product-badge badge-new">New</span>
+      <div class="product-icon">📬</div>
+      <h3>Email Urgency Classifier</h3>
+      <p>Automatically classifies incoming emails by urgency using AI, routes them to the right person or action, and keeps your inbox from becoming a bottleneck.</p>
+      <div class="product-price">€19</div>
+      <button class="product-btn">Get on Gumroad →</button>
+    </div>
+    <div class="product-card">
+      <span class="product-badge badge-new">New</span>
+      <div class="product-icon">📋</div>
+      <h3>Quote Request Automator</h3>
+      <p>Captures quote requests from email or form, extracts key details with AI, populates a spreadsheet, and sends a confirmation — all without touching your inbox.</p>
+      <div class="product-price">€19</div>
+      <button class="product-btn">Get on Gumroad →</button>
+    </div>
+    <div class="product-card">
+      <span class="product-badge badge-new">New</span>
+      <div class="product-icon">🔁</div>
+      <h3>CRM + Follow-ups</h3>
+      <p>Full CRM pipeline in n8n. Logs new leads, triggers timed follow-up sequences, and marks contacts as converted or inactive — automatically.</p>
+      <div class="product-price">€29</div>
+      <button class="product-btn">Get on Gumroad →</button>
+    </div>
+    <div class="product-card bundle">
+      <div class="bundle-grid">
+        <div class="bundle-info">
+          <span class="product-badge badge-bundle">Bundle — Best Value</span>
+          <h3>Complete Automation Bundle</h3>
+          <p>All three products together. Build a complete small-business automation stack in an afternoon.</p>
+          <ul class="bundle-includes">
+            <li>Email Urgency Classifier (€19)</li>
+            <li>Quote Request Automator (€19)</li>
+            <li>CRM + Follow-ups (€29)</li>
+            <li>Setup documentation included</li>
+          </ul>
+        </div>
+        <div class="bundle-pricing">
+          <div class="bundle-save">Save €18 vs individual</div>
+          <div class="product-price" style="font-size:3.5rem;margin-bottom:0.25rem">€49</div>
+          <div class="product-old">€67 individually</div>
+          <button class="product-btn" style="margin-top:1.5rem">Get the Bundle →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
 
-<!-- FOOTER -->
+<!-- CONTACT PAGE -->
+<div id="page-contact" class="page">
+  <div class="contact-section">
+    <p class="section-label">Let's work together</p>
+    <h2 class="section-title">Start your automation project</h2>
+    <p class="section-sub">Tell me about what you want to automate. No cold pitch, no pressure — just a technical conversation about your workflow.</p>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Other ways to reach us</h3>
+        <p>Prefer to go directly? The Fiverr gig has all three packages ready to order. For custom quotes or questions, use the form.</p>
+        <a class="contact-link" href="https://www.fiverr.com" target="_blank">
+          <span class="contact-link-icon">🟢</span>
+          <div><strong>Fiverr</strong><br><span style="font-size:12px;color:var(--text-sec)">Order directly — packages from €40</span></div>
+        </a>
+        <a class="contact-link" href="https://linkedin.com/company/zionoris" target="_blank">
+          <span class="contact-link-icon">in</span>
+          <div><strong>LinkedIn</strong><br><span style="font-size:12px;color:var(--text-sec)">linkedin.com/company/zionoris</span></div>
+        </a>
+        <a class="contact-link" href="https://gumroad.com" target="_blank">
+          <span class="contact-link-icon">🛒</span>
+          <div><strong>Gumroad / Lemon Squeezy</strong><br><span style="font-size:12px;color:var(--text-sec)">Digital products from €19</span></div>
+        </a>
+      </div>
+      <div>
+        <div class="contact-form">
+          <div class="form-group">
+            <label>Your name</label>
+            <input type="text" placeholder="Jane Smith">
+          </div>
+          <div class="form-group">
+            <label>Email address</label>
+            <input type="email" placeholder="jane@company.com">
+          </div>
+          <div class="form-group">
+            <label>What do you need?</label>
+            <select>
+              <option>Custom workflow (Fiverr)</option>
+              <option>Digital product question</option>
+              <option>Partnership / collaboration</option>
+              <option>Something else</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tell me about your workflow</label>
+            <textarea placeholder="What tools do you use? What do you want to automate? What's the manual step you hate most?"></textarea>
+          </div>
+          <button class="form-submit">Send message →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
 <footer>
-  <p>© 2025 Zionoris Technologies · Built by <a href="linkedin.com/company/zionoris" target="_blank">Zionoris Technologies</a> · <a href="https://stackd.lemonsqueezy.com/" target="_blank">All products</a></p>
+  <div class="footer-inner">
+    <div class="footer-logo">
+      <svg viewBox="0 0 28 28" width="24" height="24" fill="none"><polygon points="14,1 27,25 1,25" fill="none" stroke="#60A8E8" stroke-width="2"/><polygon points="14,7 23,24 5,24" fill="rgba(96,168,232,0.15)" stroke="#90C4F0" stroke-width="1"/></svg>
+      <span>ZIONORIS</span>
+    </div>
+    <div class="footer-links">
+      <a onclick="showPage('home')">Home</a>
+      <a onclick="showPage('services')">Services</a>
+      <a onclick="showPage('products')">Products</a>
+      <a onclick="showPage('contact')">Contact</a>
+    </div>
+    <p class="footer-copy">© 2025 Zionoris Technologies · Porto, Portugal</p>
+  </div>
 </footer>
 
-</body>
-</html>
+<script>
+function showPage(page) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+  document.getElementById('page-' + page).classList.add('active');
+  document.getElementById('nav-' + page).classList.add('active');
+  window.scrollTo(0,0);
+}
+function openFiverr() {
+  window.open('https://www.fiverr.com', '_blank');
+}
+</script>
