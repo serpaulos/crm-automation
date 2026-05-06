@@ -298,44 +298,53 @@
   .bundle-save { background: rgba(96,168,232,0.1); border: 1px solid rgba(96,168,232,0.2); border-radius: 8px; padding: 0.5rem 1rem; font-size: 13px; color: var(--blue-light); margin-bottom: 0.5rem; }
 
   /* ===== CONTACT ===== */
-  .contact-section { padding: 5rem 2rem; max-width: 900px; margin: 0 auto; }
-  .contact-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 4rem; margin-top: 3rem; }
-  .contact-info h3 { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 1rem; }
-  .contact-info p { font-size: 14px; color: var(--text-sec); line-height: 1.7; margin-bottom: 1.5rem; }
+  .contact-section { padding: 5rem 2rem; max-width: 860px; margin: 0 auto; text-align: center; }
+  .contact-cta-box {
+    background: var(--card); border: 1px solid var(--blue);
+    border-radius: 16px; padding: 3rem 2.5rem; margin: 3rem 0 2.5rem;
+    position: relative; overflow: hidden;
+  }
+  .contact-cta-box::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse 70% 60% at 50% 0%, rgba(96,168,232,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .contact-cta-box h3 {
+    font-family: 'Syne', sans-serif; font-size: 1.6rem; font-weight: 800;
+    margin-bottom: 0.75rem;
+  }
+  .contact-cta-box p { font-size: 15px; color: var(--text-sec); line-height: 1.7; max-width: 520px; margin: 0 auto 2rem; }
+  .contact-cta-btn {
+    display: inline-block; background: var(--blue); color: #0A0F1E;
+    border-radius: 8px; padding: 14px 32px; font-size: 16px; font-weight: 700;
+    font-family: 'Space Grotesk', sans-serif; text-decoration: none;
+    transition: all 0.2s; letter-spacing: 0.01em;
+  }
+  .contact-cta-btn:hover { background: var(--blue-light); transform: translateY(-2px); }
+  .contact-why {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem; margin: 2.5rem 0;
+  }
+  .contact-why-item {
+    background: var(--card); border: 1px solid var(--sep);
+    border-radius: 10px; padding: 1.25rem 1rem; text-align: center;
+  }
+  .contact-why-icon { font-size: 1.5rem; margin-bottom: 0.5rem; }
+  .contact-why-item h4 { font-size: 14px; font-weight: 600; margin-bottom: 0.3rem; }
+  .contact-why-item p { font-size: 13px; color: var(--text-sec); line-height: 1.5; }
+  .contact-links-row {
+    display: flex; flex-wrap: wrap; gap: 0.75rem; justify-content: center; margin-top: 2rem;
+  }
   .contact-link {
     display: flex; align-items: center; gap: 10px;
     padding: 12px 16px; border-radius: 8px;
     background: var(--card); border: 1px solid var(--sep);
     text-decoration: none; color: var(--text);
-    font-size: 14px; font-weight: 500; margin-bottom: 0.75rem;
+    font-size: 14px; font-weight: 500;
     transition: border-color 0.2s;
   }
   .contact-link:hover { border-color: var(--blue); color: var(--blue-light); }
   .contact-link-icon { width: 32px; height: 32px; border-radius: 7px; background: rgba(96,168,232,0.1); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
-  .contact-form { display: flex; flex-direction: column; gap: 1rem; }
-  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
-  .form-group label { font-size: 13px; font-weight: 500; color: var(--text-sec); }
-  .form-group input, .form-group textarea, .form-group select {
-    background: var(--card); border: 1px solid var(--sep);
-    border-radius: 7px; padding: 10px 14px;
-    color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 14px;
-    outline: none; transition: border-color 0.2s; width: 100%;
-    appearance: none; -webkit-appearance: none;
-  }
-  .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--blue); }
-  .form-group textarea { resize: vertical; min-height: 100px; }
-  .form-group select option { background: #0D1F3C; color: #fff; }
-  .form-submit {
-    background: var(--blue); color: #0A0F1E;
-    border: none; border-radius: 7px;
-    padding: 13px; font-size: 15px; font-weight: 600;
-    cursor: pointer; font-family: 'Space Grotesk', sans-serif; transition: all 0.2s;
-  }
-  .form-submit:hover { background: var(--blue-light); transform: translateY(-1px); }
-  .form-success {
-    display: none; background: rgba(96,168,232,0.1); border: 1px solid rgba(96,168,232,0.3);
-    border-radius: 8px; padding: 1rem; text-align: center; font-size: 14px; color: var(--blue-light);
-  }
 
   /* ===== FOOTER ===== */
   footer {
@@ -382,7 +391,7 @@
     <a onclick="showPage('products')" id="nav-products">Products</a>
     <a onclick="showPage('contact')" id="nav-contact">Contact</a>
   </div>
-  <a class="nav-cta" onclick="showPage('contact')" href="#">Get a Quote →</a>
+  <a class="nav-cta" href="https://www.fiverr.com/paulo_silvajr/automate-your-business-workflows-using-n8n-and-ai" target="_blank" rel="noopener">Get a Quote →</a>
 </nav>
 
 <!-- ===== HOME ===== -->
@@ -636,59 +645,48 @@
 <!-- ===== CONTACT ===== -->
 <div id="page-contact" class="page">
   <div class="contact-section">
-    <p class="section-label">Let's work together</p>
-    <h2 class="section-title">Start your automation project</h2>
-    <p class="section-sub">Tell me about what you want to automate. No cold pitch, no pressure — just a technical conversation about your workflow.</p>
-    <div class="contact-grid">
-      <div class="contact-info">
-        <h3>Other ways to reach us</h3>
-        <p>Prefer to go directly? The Fiverr gig has all three packages ready to order. For custom quotes or questions, use the form.</p>
-        <a class="contact-link" href="https://www.fiverr.com/paulo_silvajr/automate-your-business-workflows-using-n8n-and-ai" target="_blank" rel="noopener">
-          <span class="contact-link-icon">🟢</span>
-          <div><strong>Fiverr</strong><br><span style="font-size:12px;color:var(--text-sec)">Order directly — packages from €40</span></div>
-        </a>
-        <a class="contact-link" href="https://linkedin.com/company/zionoris" target="_blank" rel="noopener">
-          <span class="contact-link-icon" style="font-size:12px;font-weight:700;color:var(--blue-light)">in</span>
-          <div><strong>LinkedIn</strong><br><span style="font-size:12px;color:var(--text-sec)">linkedin.com/company/zionoris</span></div>
-        </a>
-        <a class="contact-link" href="https://paulosilvajr.gumroad.com" target="_blank" rel="noopener">
-          <span class="contact-link-icon">🛒</span>
-          <div><strong>Gumroad</strong><br><span style="font-size:12px;color:var(--text-sec)">paulosilvajr.gumroad.com</span></div>
-        </a>
-        <a class="contact-link" href="https://stackd.lemonsqueezy.com/" target="_blank" rel="noopener">
-          <span class="contact-link-icon">🛒</span>
-          <div><strong>Lemon Squeezy</strong><br><span style="font-size:12px;color:var(--text-sec)">stackd.lemonsqueezy.com</span></div>
-        </a>
+    <p class="section-label">Work with me</p>
+    <h2 class="section-title">Ready to automate your business?</h2>
+    <p class="section-sub" style="margin:0 auto 0;max-width:580px">All projects are handled through Fiverr — your scope, timeline, and deliverables are documented from day one. No surprises, no scope creep.</p>
+
+    <div class="contact-cta-box">
+      <h3>Start your project on Fiverr</h3>
+      <p>Browse the packages, pick the one that fits, and message me with your requirements. I'll confirm scope before any work begins.</p>
+      <a class="contact-cta-btn" href="https://www.fiverr.com/paulo_silvajr/automate-your-business-workflows-using-n8n-and-ai" target="_blank" rel="noopener">Open Fiverr Gig →</a>
+    </div>
+
+    <div class="contact-why">
+      <div class="contact-why-item">
+        <div class="contact-why-icon">📄</div>
+        <h4>Everything documented</h4>
+        <p>Scope, revisions, and delivery are all tracked inside Fiverr — no emails to lose.</p>
       </div>
-      <div>
-        <div class="contact-form" id="contact-form">
-          <div class="form-group">
-            <label for="name">Your name</label>
-            <input type="text" id="name" placeholder="Jane Smith" autocomplete="name">
-          </div>
-          <div class="form-group">
-            <label for="email">Email address</label>
-            <input type="email" id="email" placeholder="jane@company.com" autocomplete="email">
-          </div>
-          <div class="form-group">
-            <label for="need">What do you need?</label>
-            <select id="need">
-              <option value="custom">Custom workflow (Fiverr)</option>
-              <option value="product">Digital product question</option>
-              <option value="partner">Partnership / collaboration</option>
-              <option value="other">Something else</option>
-            </select>
-          </div>
-          <div class="form-group">
-            <label for="message">Tell me about your workflow</label>
-            <textarea id="message" placeholder="What tools do you use? What do you want to automate? What's the manual step you hate most?"></textarea>
-          </div>
-          <button class="form-submit" onclick="submitForm()">Send message →</button>
-          <div class="form-success" id="form-success">
-            ✓ Message received! I'll be in touch within 24 hours.
-          </div>
-        </div>
+      <div class="contact-why-item">
+        <div class="contact-why-icon">🔒</div>
+        <h4>Protected payments</h4>
+        <p>Fiverr holds payment in escrow. You only release funds when you're satisfied.</p>
       </div>
+      <div class="contact-why-item">
+        <div class="contact-why-icon">✅</div>
+        <h4>Clear deliverables</h4>
+        <p>Each package has defined outputs. No ambiguity about what you'll receive.</p>
+      </div>
+    </div>
+
+    <p style="font-size:13px;color:var(--text-sec);margin-bottom:1rem">Also find me on</p>
+    <div class="contact-links-row">
+      <a class="contact-link" href="https://linkedin.com/company/zionoris" target="_blank" rel="noopener">
+        <span class="contact-link-icon" style="font-size:12px;font-weight:700;color:var(--blue-light)">in</span>
+        <div><strong>LinkedIn</strong></div>
+      </a>
+      <a class="contact-link" href="https://paulosilvajr.gumroad.com" target="_blank" rel="noopener">
+        <span class="contact-link-icon">🛒</span>
+        <div><strong>Gumroad</strong></div>
+      </a>
+      <a class="contact-link" href="https://stackd.lemonsqueezy.com/" target="_blank" rel="noopener">
+        <span class="contact-link-icon">🛒</span>
+        <div><strong>Lemon Squeezy</strong></div>
+      </a>
     </div>
   </div>
 </div>
@@ -718,18 +716,6 @@
     if (pg) pg.classList.add('active');
     if (nav) nav.classList.add('active');
     window.scrollTo(0, 0);
-  }
-
-  function submitForm() {
-    var name = document.getElementById('name').value;
-    var email = document.getElementById('email').value;
-    var message = document.getElementById('message').value;
-    if (!name || !email || !message) {
-      alert('Please fill in your name, email, and message.');
-      return;
-    }
-    document.querySelector('.form-submit').style.display = 'none';
-    document.getElementById('form-success').style.display = 'block';
   }
 
   // Handle browser back/forward with hash
