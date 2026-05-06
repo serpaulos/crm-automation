@@ -3,7 +3,14 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Zionoris Technologies</title>
+<title>Zionoris Technologies — n8n Automation for Small Business</title>
+<meta name="description" content="Enterprise-grade n8n automation built for small and mid-size businesses. CRM pipelines, email classification, API integrations. 20 years of IBM & Euronext reliability.">
+<meta name="keywords" content="n8n automation, workflow automation, CRM automation, email automation, Fiverr automation, small business automation">
+<meta property="og:title" content="Zionoris Technologies — n8n Automation">
+<meta property="og:description" content="Workflows that run. Unattended. Reliably. Enterprise-grade automation without the enterprise price tag.">
+<meta property="og:url" content="https://zionoris.com">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Syne:wght@400;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -17,20 +24,29 @@
     --sep: #1E3A5F;
     --card: #0D1F3C;
   }
-  * { margin: 0; padding: 0; box-sizing: border-box; }
-  body { background: var(--bg); color: var(--text); font-family: 'Space Grotesk', sans-serif; overflow-x: hidden; }
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Space Grotesk', sans-serif;
+    overflow-x: hidden;
+    min-height: 100vh;
+  }
 
+  /* ===== NAV ===== */
   nav {
     position: sticky; top: 0; z-index: 100;
     background: rgba(10,15,30,0.92);
     backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--sep);
     padding: 0 2rem;
     display: flex; align-items: center; justify-content: space-between;
     height: 64px;
   }
-  .nav-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; }
-  .nav-logo svg { width: 36px; height: 36px; }
+  .nav-logo { display: flex; align-items: center; gap: 10px; cursor: pointer; text-decoration: none; }
+  .nav-logo svg { width: 36px; height: 36px; flex-shrink: 0; }
   .nav-logo-text { font-family: 'Syne', sans-serif; font-size: 18px; font-weight: 800; letter-spacing: 0.04em; color: var(--text); }
   .nav-links { display: flex; gap: 2rem; }
   .nav-links a {
@@ -47,9 +63,11 @@
     cursor: pointer; font-family: 'Space Grotesk', sans-serif;
     transition: background 0.2s, transform 0.1s;
     letter-spacing: 0.02em;
+    text-decoration: none; display: inline-block;
   }
   .nav-cta:hover { background: var(--blue-light); transform: translateY(-1px); }
 
+  /* ===== PAGES ===== */
   .page { display: none; animation: fadeIn 0.35s ease; }
   .page.active { display: block; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
@@ -75,7 +93,10 @@
     letter-spacing: 0.06em; text-transform: uppercase;
     margin-bottom: 2rem;
   }
-  .hero-badge::before { content: ''; width: 6px; height: 6px; border-radius: 50%; background: var(--blue); animation: pulse 2s infinite; }
+  .hero-badge::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: var(--blue); animation: pulse 2s infinite;
+  }
   @keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:0.5;transform:scale(0.8)} }
   .hero h1 {
     font-family: 'Syne', sans-serif;
@@ -96,6 +117,7 @@
     padding: 13px 28px; font-size: 15px; font-weight: 600;
     cursor: pointer; font-family: 'Space Grotesk', sans-serif;
     transition: all 0.2s; letter-spacing: 0.01em;
+    text-decoration: none; display: inline-block;
   }
   .btn-primary:hover { background: var(--blue-light); transform: translateY(-2px); }
   .btn-outline {
@@ -103,7 +125,7 @@
     border: 1.5px solid var(--sep); border-radius: 7px;
     padding: 13px 28px; font-size: 15px; font-weight: 600;
     cursor: pointer; font-family: 'Space Grotesk', sans-serif;
-    transition: all 0.2s;
+    transition: all 0.2s; text-decoration: none; display: inline-block;
   }
   .btn-outline:hover { border-color: var(--blue); color: var(--blue); transform: translateY(-2px); }
 
@@ -111,7 +133,6 @@
     display: grid; grid-template-columns: repeat(3, 1fr);
     gap: 1px; background: var(--sep);
     border-top: 1px solid var(--sep); border-bottom: 1px solid var(--sep);
-    margin: 0;
   }
   .stat { background: var(--bg); padding: 2.5rem 2rem; text-align: center; }
   .stat-num {
@@ -133,7 +154,10 @@
     font-weight: 800; color: var(--text);
     margin-bottom: 1rem; line-height: 1.2;
   }
-  .section-sub { font-size: 1rem; color: var(--text-sec); max-width: 560px; line-height: 1.7; margin-bottom: 3rem; }
+  .section-sub {
+    font-size: 1rem; color: var(--text-sec); max-width: 560px;
+    line-height: 1.7; margin-bottom: 3rem;
+  }
 
   .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; }
   .feature-card {
@@ -152,16 +176,24 @@
   .feature-card p { font-size: 14px; color: var(--text-sec); line-height: 1.6; }
 
   .trust-bar {
-    background: var(--card); border-top: 1px solid var(--sep); border-bottom: 1px solid var(--sep);
+    background: var(--card);
+    border-top: 1px solid var(--sep); border-bottom: 1px solid var(--sep);
     padding: 2rem;
   }
-  .trust-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: center; gap: 3rem; flex-wrap: wrap; }
+  .trust-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: center;
+    gap: 3rem; flex-wrap: wrap;
+  }
   .trust-item { font-size: 13px; color: var(--text-sec); display: flex; align-items: center; gap: 8px; }
   .trust-item strong { color: var(--text); }
 
   /* ===== SERVICES ===== */
   .services-hero { padding: 5rem 2rem 3rem; text-align: center; }
-  .plans-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1100px; margin: 0 auto 3rem; padding: 0 2rem; }
+  .plans-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem; max-width: 1100px; margin: 0 auto 3rem; padding: 0 2rem;
+  }
   .plan-card {
     background: var(--card); border: 1px solid var(--sep);
     border-radius: 14px; padding: 2rem; position: relative;
@@ -174,7 +206,7 @@
     position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
     background: var(--blue); color: #0A0F1E;
     font-size: 11px; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 4px 14px; border-radius: 100px;
+    padding: 4px 14px; border-radius: 100px; white-space: nowrap;
   }
   .plan-tier { font-size: 12px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--blue-light); margin-bottom: 0.5rem; }
   .plan-name { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
@@ -182,20 +214,33 @@
   .plan-price span { font-size: 15px; color: var(--text-sec); font-weight: 400; }
   .plan-desc { font-size: 13px; color: var(--text-sec); margin: 1rem 0 1.25rem; line-height: 1.6; }
   .plan-features { list-style: none; margin-bottom: 1.5rem; flex: 1; }
-  .plan-features li { font-size: 13px; color: var(--text-sec); padding: 6px 0; border-bottom: 1px solid rgba(30,58,95,0.5); display: flex; align-items: flex-start; gap: 8px; }
-  .plan-features li::before { content: ''; width: 16px; height: 16px; min-width: 16px; border-radius: 50%; background: rgba(96,168,232,0.15); border: 1px solid rgba(96,168,232,0.3); display: inline-block; margin-top: 1px; }
+  .plan-features li {
+    font-size: 13px; color: var(--text-sec); padding: 6px 0;
+    border-bottom: 1px solid rgba(30,58,95,0.5);
+    display: flex; align-items: flex-start; gap: 8px;
+  }
+  .plan-features li::before {
+    content: ''; width: 16px; height: 16px; min-width: 16px;
+    border-radius: 50%; background: rgba(96,168,232,0.15);
+    border: 1px solid rgba(96,168,232,0.3);
+    display: inline-block; margin-top: 1px;
+  }
   .plan-btn {
     width: 100%; padding: 11px; border-radius: 7px;
     font-size: 14px; font-weight: 600; cursor: pointer;
     font-family: 'Space Grotesk', sans-serif; transition: all 0.2s;
-    text-align: center;
+    text-align: center; text-decoration: none; display: block;
   }
   .plan-btn.primary { background: var(--blue); color: #0A0F1E; border: none; }
   .plan-btn.primary:hover { background: var(--blue-light); }
   .plan-btn.outline { background: transparent; color: var(--blue-light); border: 1.5px solid var(--sep); }
   .plan-btn.outline:hover { border-color: var(--blue); color: var(--blue); }
 
-  .process-section { background: var(--card); border-top: 1px solid var(--sep); border-bottom: 1px solid var(--sep); padding: 4rem 2rem; }
+  .process-section {
+    background: var(--card);
+    border-top: 1px solid var(--sep); border-bottom: 1px solid var(--sep);
+    padding: 4rem 2rem;
+  }
   .process-inner { max-width: 1100px; margin: 0 auto; }
   .process-steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 2rem; margin-top: 2.5rem; }
   .process-step { text-align: center; }
@@ -205,7 +250,10 @@
 
   /* ===== PRODUCTS ===== */
   .products-hero { padding: 5rem 2rem 3rem; text-align: center; }
-  .products-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem; max-width: 1100px; margin: 0 auto 2rem; padding: 0 2rem; }
+  .products-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem; max-width: 1100px; margin: 0 auto 2rem; padding: 0 2rem;
+  }
   .product-card {
     background: var(--card); border: 1px solid var(--sep);
     border-radius: 14px; padding: 2rem; position: relative;
@@ -213,14 +261,14 @@
   }
   .product-card:hover { border-color: rgba(96,168,232,0.4); transform: translateY(-4px); }
   .product-card.bundle {
-    border-color: var(--blue); background: linear-gradient(135deg, #0D1F3C 0%, #0A1830 100%);
+    border-color: var(--blue);
+    background: linear-gradient(135deg, #0D1F3C 0%, #0A1830 100%);
     grid-column: 1 / -1;
   }
   .product-badge {
     display: inline-block; font-size: 11px; font-weight: 700;
     letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 3px 10px; border-radius: 100px;
-    margin-bottom: 1rem;
+    padding: 3px 10px; border-radius: 100px; margin-bottom: 1rem;
   }
   .badge-new { background: rgba(96,168,232,0.15); color: var(--blue-light); border: 1px solid rgba(96,168,232,0.2); }
   .badge-bundle { background: var(--blue); color: #0A0F1E; }
@@ -229,13 +277,17 @@
   .product-card p { font-size: 13px; color: var(--text-sec); line-height: 1.6; flex: 1; margin-bottom: 1.25rem; }
   .product-price { font-size: 2rem; font-weight: 700; color: var(--blue); margin-bottom: 0.25rem; }
   .product-old { font-size: 13px; color: var(--text-sec); text-decoration: line-through; }
+  .store-btns { display: flex; flex-direction: column; gap: 0.5rem; margin-top: 1rem; }
   .product-btn {
     width: 100%; padding: 10px; border-radius: 7px;
     font-size: 14px; font-weight: 600; cursor: pointer;
-    font-family: 'Space Grotesk', sans-serif; transition: all 0.2s; border: none;
-    background: var(--blue); color: #0A0F1E; margin-top: 1rem;
+    font-family: 'Space Grotesk', sans-serif; transition: all 0.2s;
+    text-decoration: none; display: block; text-align: center;
   }
-  .product-btn:hover { background: var(--blue-light); }
+  .store-primary { background: var(--blue); color: #0A0F1E; border: none; }
+  .store-primary:hover { background: var(--blue-light); }
+  .store-outline { background: transparent; color: var(--blue-light); border: 1.5px solid var(--sep); }
+  .store-outline:hover { border-color: var(--blue); color: var(--blue); }
   .bundle-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1.5rem; }
   .bundle-info h3 { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 800; margin-bottom: 0.5rem; }
   .bundle-info p { font-size: 14px; color: var(--text-sec); line-height: 1.6; margin-bottom: 1rem; }
@@ -259,7 +311,7 @@
     transition: border-color 0.2s;
   }
   .contact-link:hover { border-color: var(--blue); color: var(--blue-light); }
-  .contact-link-icon { width: 32px; height: 32px; border-radius: 7px; background: rgba(96,168,232,0.1); display: flex; align-items: center; justify-content: center; font-size: 14px; }
+  .contact-link-icon { width: 32px; height: 32px; border-radius: 7px; background: rgba(96,168,232,0.1); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
   .contact-form { display: flex; flex-direction: column; gap: 1rem; }
   .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
   .form-group label { font-size: 13px; font-weight: 500; color: var(--text-sec); }
@@ -267,60 +319,81 @@
     background: var(--card); border: 1px solid var(--sep);
     border-radius: 7px; padding: 10px 14px;
     color: var(--text); font-family: 'Space Grotesk', sans-serif; font-size: 14px;
-    outline: none; transition: border-color 0.2s;
-    width: 100%;
+    outline: none; transition: border-color 0.2s; width: 100%;
+    appearance: none; -webkit-appearance: none;
   }
   .form-group input:focus, .form-group textarea:focus, .form-group select:focus { border-color: var(--blue); }
   .form-group textarea { resize: vertical; min-height: 100px; }
-  .form-group select option { background: #0D1F3C; }
+  .form-group select option { background: #0D1F3C; color: #fff; }
   .form-submit {
     background: var(--blue); color: #0A0F1E;
     border: none; border-radius: 7px;
     padding: 13px; font-size: 15px; font-weight: 600;
-    cursor: pointer; font-family: 'Space Grotesk', sans-serif;
-    transition: all 0.2s;
+    cursor: pointer; font-family: 'Space Grotesk', sans-serif; transition: all 0.2s;
   }
   .form-submit:hover { background: var(--blue-light); transform: translateY(-1px); }
+  .form-success {
+    display: none; background: rgba(96,168,232,0.1); border: 1px solid rgba(96,168,232,0.3);
+    border-radius: 8px; padding: 1rem; text-align: center; font-size: 14px; color: var(--blue-light);
+  }
 
+  /* ===== FOOTER ===== */
   footer {
     background: var(--card); border-top: 1px solid var(--sep);
-    padding: 2.5rem 2rem; text-align: center;
+    padding: 2.5rem 2rem;
   }
-  .footer-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 1rem; }
-  .footer-logo { display: flex; align-items: center; gap: 8px; }
+  .footer-inner {
+    max-width: 1100px; margin: 0 auto;
+    display: flex; align-items: center; justify-content: space-between;
+    flex-wrap: wrap; gap: 1rem;
+  }
+  .footer-logo { display: flex; align-items: center; gap: 8px; text-decoration: none; cursor: pointer; }
   .footer-logo span { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 16px; color: var(--text); }
   .footer-links { display: flex; gap: 1.5rem; }
   .footer-links a { font-size: 13px; color: var(--text-sec); cursor: pointer; text-decoration: none; transition: color 0.2s; }
   .footer-links a:hover { color: var(--blue-light); }
   .footer-copy { font-size: 12px; color: var(--text-sec); }
+
+  /* ===== RESPONSIVE ===== */
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .stats { grid-template-columns: 1fr; }
+    .contact-grid { grid-template-columns: 1fr; gap: 2rem; }
+    .bundle-grid { grid-template-columns: 1fr; }
+    .footer-inner { flex-direction: column; text-align: center; }
+    .footer-links { justify-content: center; }
+    .hero h1 { font-size: 2.2rem; }
+  }
 </style>
+</head>
+<body>
 
 <nav>
-  <div class="nav-logo" onclick="showPage('home')">
+  <a class="nav-logo" onclick="showPage('home')" href="#">
     <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
       <polygon points="18,2 34,32 2,32" fill="none" stroke="#60A8E8" stroke-width="2.5"/>
       <polygon points="18,9 29,30 7,30" fill="rgba(96,168,232,0.18)" stroke="#90C4F0" stroke-width="1.5"/>
     </svg>
     <span class="nav-logo-text">ZIONORIS</span>
-  </div>
+  </a>
   <div class="nav-links">
     <a onclick="showPage('home')" id="nav-home" class="active">Home</a>
     <a onclick="showPage('services')" id="nav-services">Services</a>
     <a onclick="showPage('products')" id="nav-products">Products</a>
     <a onclick="showPage('contact')" id="nav-contact">Contact</a>
   </div>
-  <button class="nav-cta" onclick="showPage('contact')">Get a Quote →</button>
+  <a class="nav-cta" onclick="showPage('contact')" href="#">Get a Quote →</a>
 </nav>
 
-<!-- HOME PAGE -->
+<!-- ===== HOME ===== -->
 <div id="page-home" class="page active">
   <section class="hero">
     <div class="hero-badge">n8n Automation Specialist</div>
     <h1>Workflows that run.<br><span>Unattended.</span> Reliably.</h1>
     <p>Enterprise-grade automation built for small and mid-size businesses. 20 years of IBM, Kyndryl, and Euronext reliability — without the enterprise price tag.</p>
     <div class="hero-btns">
-      <button class="btn-primary" onclick="showPage('services')">Explore Services</button>
-      <button class="btn-outline" onclick="showPage('products')">Browse Digital Products</button>
+      <a class="btn-primary" onclick="showPage('services')" href="#">Explore Services</a>
+      <a class="btn-outline" onclick="showPage('products')" href="#">Browse Digital Products</a>
     </div>
   </section>
 
@@ -337,42 +410,42 @@
     <div class="features-grid">
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
         </div>
         <h3>CRM Pipelines</h3>
         <p>Automated lead tracking, client onboarding, and follow-up sequences. No more forgotten enquiries.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M8 2v4m8-4v4M2 10h20"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M8 2v4m8-4v4M2 10h20"/></svg>
         </div>
         <h3>Email Classification</h3>
         <p>AI-powered inbox sorting that routes urgent requests, quotes, and enquiries automatically.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 2v4m0 12v4M2 12h4m12 0h4"/></svg>
         </div>
         <h3>API Integrations</h3>
         <p>Connect your existing tools — CRMs, spreadsheets, Slack, email, webhooks — into one seamless flow.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 3H5a2 2 0 0 0-2 2v4m6-6h10a2 2 0 0 1 2 2v4M9 3v18m0 0h10a2 2 0 0 0 2-2v-4M9 21H5a2 2 0 0 1-2-2v-4m0 0h18"/></svg>
         </div>
         <h3>n8n Workflows</h3>
         <p>Built on n8n — open source, self-hostable, and battle-tested. No vendor lock-in, no black boxes.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
         </div>
         <h3>Error Handling</h3>
         <p>Every workflow includes retry logic, error notifications, and graceful fallbacks. It runs or it tells you why.</p>
       </div>
       <div class="feature-card">
         <div class="feature-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#60A8E8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
         </div>
         <h3>Full Documentation</h3>
         <p>Every delivery comes with written documentation so your team can maintain, adapt, and build on it.</p>
@@ -382,18 +455,18 @@
 
   <div class="trust-bar">
     <div class="trust-inner">
-      <div class="trust-item"><strong>IBM</strong> <span>· Former engineer</span></div>
-      <div class="trust-item"><strong>Kyndryl</strong> <span>· IT infrastructure</span></div>
-      <div class="trust-item"><strong>Euronext Securities</strong> <span>· Capital markets</span></div>
-      <div class="trust-item"><strong>n8n</strong> <span>· Certified workflows</span></div>
+      <div class="trust-item"><strong>IBM</strong><span> · Former engineer</span></div>
+      <div class="trust-item"><strong>Kyndryl</strong><span> · IT infrastructure</span></div>
+      <div class="trust-item"><strong>Euronext Securities</strong><span> · Capital markets</span></div>
+      <div class="trust-item"><strong>n8n</strong><span> · Workflow specialist</span></div>
     </div>
   </div>
 </div>
 
-<!-- SERVICES PAGE -->
+<!-- ===== SERVICES ===== -->
 <div id="page-services" class="page">
   <section class="services-hero">
-    <p class="section-label" style="text-align:center">Fiverr-ready packages</p>
+    <p class="section-label" style="text-align:center">Fiverr packages</p>
     <h2 class="section-title" style="text-align:center;margin:0 auto 1rem">Choose your automation tier</h2>
     <p style="text-align:center;color:var(--text-sec);font-size:1rem;max-width:520px;margin:0 auto 3rem;line-height:1.7">From a single workflow to a full automation system. All packages include documentation and error handling.</p>
   </section>
@@ -410,7 +483,7 @@
         <li>5-day delivery</li>
         <li>1 revision included</li>
       </ul>
-      <button class="plan-btn outline" onclick="openFiverr()">Order on Fiverr →</button>
+      <a class="plan-btn outline" href="https://www.fiverr.com/paulo_silvajr/automate-your-business-workflows-using-n8n-and-ai" target="_blank" rel="noopener">Order on Fiverr →</a>
     </div>
     <div class="plan-card featured">
       <div class="plan-popular">Most Popular</div>
@@ -426,7 +499,7 @@
         <li>2 revisions included</li>
         <li>Written documentation</li>
       </ul>
-      <button class="plan-btn primary" onclick="openFiverr()">Order on Fiverr →</button>
+      <a class="plan-btn primary" href="https://www.fiverr.com/paulo_silvajr/automate-your-business-workflows-using-n8n-and-ai" target="_blank" rel="noopener">Order on Fiverr →</a>
     </div>
     <div class="plan-card">
       <p class="plan-tier">Enterprise-grade</p>
@@ -441,7 +514,7 @@
         <li>Unlimited revisions</li>
         <li>Full documentation + handoff call</li>
       </ul>
-      <button class="plan-btn outline" onclick="openFiverr()">Order on Fiverr →</button>
+      <a class="plan-btn outline" href="https://www.fiverr.com/paulo_silvajr/automate-your-business-workflows-using-n8n-and-ai" target="_blank" rel="noopener">Order on Fiverr →</a>
     </div>
   </div>
 
@@ -475,7 +548,7 @@
   </div>
 </div>
 
-<!-- PRODUCTS PAGE -->
+<!-- ===== PRODUCTS ===== -->
 <div id="page-products" class="page">
   <section class="products-hero">
     <p class="section-label" style="text-align:center">Ready-to-deploy templates</p>
@@ -483,40 +556,65 @@
     <p style="text-align:center;color:var(--text-sec);font-size:1rem;max-width:520px;margin:0 auto 3rem;line-height:1.7">Pre-built n8n workflows ready to import, configure, and run. No development needed.</p>
   </section>
   <div class="products-grid">
+
     <div class="product-card">
       <span class="product-badge badge-new">New</span>
       <div class="product-icon">📬</div>
       <h3>Email Urgency Classifier</h3>
       <p>Automatically classifies incoming emails by urgency using AI, routes them to the right person or action, and keeps your inbox from becoming a bottleneck.</p>
       <div class="product-price">€19</div>
-      <button class="product-btn" onclick="openGumroad()">Get on Gumroad →</button>
+      <div class="store-btns">
+        <a class="product-btn store-primary" href="https://paulosilvajr.gumroad.com/l/n8n-email-urgency-classifier" target="_blank" rel="noopener">Gumroad →</a>
+        <a class="product-btn store-outline" href="https://stackd.lemonsqueezy.com/" target="_blank" rel="noopener">Lemon Squeezy →</a>
+      </div>
     </div>
+
     <div class="product-card">
       <span class="product-badge badge-new">New</span>
       <div class="product-icon">📋</div>
       <h3>Quote Request Automator</h3>
-      <p>Captures quote requests from email or form, extracts key details with AI, populates a spreadsheet, and sends a confirmation — all without touching your inbox.</p>
+      <p>Captures quote requests from email or form, extracts key details with AI, populates a spreadsheet, and sends a confirmation — without touching your inbox.</p>
       <div class="product-price">€19</div>
-      <button class="product-btn" onclick="openGumroad()">Get on Gumroad →</button>
+      <div class="store-btns">
+        <a class="product-btn store-primary" href="https://paulosilvajr.gumroad.com/l/quote-request-automator" target="_blank" rel="noopener">Gumroad →</a>
+        <a class="product-btn store-outline" href="https://stackd.lemonsqueezy.com/" target="_blank" rel="noopener">Lemon Squeezy →</a>
+      </div>
     </div>
+
     <div class="product-card">
       <span class="product-badge badge-new">New</span>
       <div class="product-icon">🔁</div>
-      <h3>CRM + Follow-ups</h3>
-      <p>Full CRM pipeline in n8n. Logs new leads, triggers timed follow-up sequences, and marks contacts as converted or inactive — automatically.</p>
+      <h3>CRM + Google Sheets + Follow-ups</h3>
+      <p>Full CRM pipeline in n8n. Logs new leads into Google Sheets, triggers timed follow-up sequences, and marks contacts as converted or inactive — automatically.</p>
       <div class="product-price">€29</div>
-      <button class="product-btn" onclick="openGumroad()">Get on Gumroad →</button>
+      <div class="store-btns">
+        <a class="product-btn store-primary" href="https://paulosilvajr.gumroad.com/l/n8n-CRM-GoogleSheets-Automated-Follow-ups" target="_blank" rel="noopener">Gumroad →</a>
+        <a class="product-btn store-outline" href="https://stackd.lemonsqueezy.com/" target="_blank" rel="noopener">Lemon Squeezy →</a>
+      </div>
     </div>
+
+    <div class="product-card">
+      <span class="product-badge badge-new">New</span>
+      <div class="product-icon">🗂️</div>
+      <h3>Freelancer OS</h3>
+      <p>Run your entire freelance business in Notion. Client tracker, project pipeline, invoicing, and weekly review — all in one pre-built system ready to use today.</p>
+      <div class="product-price">€29</div>
+      <div class="store-btns">
+        <a class="product-btn store-primary" href="https://paulosilvajr.gumroad.com/l/freelancer-os-notion-bundle" target="_blank" rel="noopener">Gumroad →</a>
+        <a class="product-btn store-outline" href="https://stackd.lemonsqueezy.com/" target="_blank" rel="noopener">Lemon Squeezy →</a>
+      </div>
+    </div>
+
     <div class="product-card bundle">
       <div class="bundle-grid">
         <div class="bundle-info">
           <span class="product-badge badge-bundle">Bundle — Best Value</span>
-          <h3>Complete Automation Bundle</h3>
-          <p>All three products together. Build a complete small-business automation stack in an afternoon.</p>
+          <h3>Complete n8n Automation Pack</h3>
+          <p>All three automation workflows together. Build a complete small-business automation stack in an afternoon.</p>
           <ul class="bundle-includes">
             <li>Email Urgency Classifier (€19)</li>
             <li>Quote Request Automator (€19)</li>
-            <li>CRM + Follow-ups (€29)</li>
+            <li>CRM + Google Sheets + Follow-ups (€29)</li>
             <li>Setup documentation included</li>
           </ul>
         </div>
@@ -524,14 +622,18 @@
           <div class="bundle-save">Save €18 vs individual</div>
           <div class="product-price" style="font-size:3.5rem;margin-bottom:0.25rem">€49</div>
           <div class="product-old">€67 individually</div>
-          <button class="product-btn" style="margin-top:1.5rem" onclick="openGumroad()">Get the Bundle →</button>
+          <div class="store-btns" style="flex-direction:column;margin-top:1.5rem">
+            <a class="product-btn store-primary" href="https://paulosilvajr.gumroad.com/l/complete-n8n-freelancer-automation-pack" target="_blank" rel="noopener">Get Bundle on Gumroad →</a>
+            <a class="product-btn store-outline" href="https://stackd.lemonsqueezy.com/" target="_blank" rel="noopener">Lemon Squeezy →</a>
+          </div>
         </div>
       </div>
     </div>
+
   </div>
 </div>
 
-<!-- CONTACT PAGE -->
+<!-- ===== CONTACT ===== -->
 <div id="page-contact" class="page">
   <div class="contact-section">
     <p class="section-label">Let's work together</p>
@@ -541,43 +643,50 @@
       <div class="contact-info">
         <h3>Other ways to reach us</h3>
         <p>Prefer to go directly? The Fiverr gig has all three packages ready to order. For custom quotes or questions, use the form.</p>
-        <a class="contact-link" href="https://www.fiverr.com" target="_blank">
+        <a class="contact-link" href="https://www.fiverr.com/paulo_silvajr/automate-your-business-workflows-using-n8n-and-ai" target="_blank" rel="noopener">
           <span class="contact-link-icon">🟢</span>
           <div><strong>Fiverr</strong><br><span style="font-size:12px;color:var(--text-sec)">Order directly — packages from €40</span></div>
         </a>
-        <a class="contact-link" href="https://linkedin.com/company/zionoris" target="_blank">
-          <span class="contact-link-icon">in</span>
+        <a class="contact-link" href="https://linkedin.com/company/zionoris" target="_blank" rel="noopener">
+          <span class="contact-link-icon" style="font-size:12px;font-weight:700;color:var(--blue-light)">in</span>
           <div><strong>LinkedIn</strong><br><span style="font-size:12px;color:var(--text-sec)">linkedin.com/company/zionoris</span></div>
         </a>
-        <a class="contact-link" href="https://paulosilvajr.gumroad.com/" target="_blank">
+        <a class="contact-link" href="https://paulosilvajr.gumroad.com" target="_blank" rel="noopener">
           <span class="contact-link-icon">🛒</span>
-          <div><strong>Gumroad</strong><br><span style="font-size:12px;color:var(--text-sec)">Digital products from €19</span></div>
+          <div><strong>Gumroad</strong><br><span style="font-size:12px;color:var(--text-sec)">paulosilvajr.gumroad.com</span></div>
+        </a>
+        <a class="contact-link" href="https://stackd.lemonsqueezy.com/" target="_blank" rel="noopener">
+          <span class="contact-link-icon">🛒</span>
+          <div><strong>Lemon Squeezy</strong><br><span style="font-size:12px;color:var(--text-sec)">stackd.lemonsqueezy.com</span></div>
         </a>
       </div>
       <div>
-        <div class="contact-form">
+        <div class="contact-form" id="contact-form">
           <div class="form-group">
-            <label>Your name</label>
-            <input type="text" placeholder="Jane Smith">
+            <label for="name">Your name</label>
+            <input type="text" id="name" placeholder="Jane Smith" autocomplete="name">
           </div>
           <div class="form-group">
-            <label>Email address</label>
-            <input type="email" placeholder="jane@company.com">
+            <label for="email">Email address</label>
+            <input type="email" id="email" placeholder="jane@company.com" autocomplete="email">
           </div>
           <div class="form-group">
-            <label>What do you need?</label>
-            <select>
-              <option>Custom workflow (Fiverr)</option>
-              <option>Digital product question</option>
-              <option>Partnership / collaboration</option>
-              <option>Something else</option>
+            <label for="need">What do you need?</label>
+            <select id="need">
+              <option value="custom">Custom workflow (Fiverr)</option>
+              <option value="product">Digital product question</option>
+              <option value="partner">Partnership / collaboration</option>
+              <option value="other">Something else</option>
             </select>
           </div>
           <div class="form-group">
-            <label>Tell me about your workflow</label>
-            <textarea placeholder="What tools do you use? What do you want to automate? What's the manual step you hate most?"></textarea>
+            <label for="message">Tell me about your workflow</label>
+            <textarea id="message" placeholder="What tools do you use? What do you want to automate? What's the manual step you hate most?"></textarea>
           </div>
-          <button class="form-submit">Send message →</button>
+          <button class="form-submit" onclick="submitForm()">Send message →</button>
+          <div class="form-success" id="form-success">
+            ✓ Message received! I'll be in touch within 24 hours.
+          </div>
         </div>
       </div>
     </div>
@@ -586,32 +695,54 @@
 
 <footer>
   <div class="footer-inner">
-    <div class="footer-logo">
+    <a class="footer-logo" onclick="showPage('home')" href="#">
       <svg viewBox="0 0 28 28" width="24" height="24" fill="none"><polygon points="14,1 27,25 1,25" fill="none" stroke="#60A8E8" stroke-width="2"/><polygon points="14,7 23,24 5,24" fill="rgba(96,168,232,0.15)" stroke="#90C4F0" stroke-width="1"/></svg>
       <span>ZIONORIS</span>
-    </div>
+    </a>
     <div class="footer-links">
-      <a onclick="showPage('home')">Home</a>
-      <a onclick="showPage('services')">Services</a>
-      <a onclick="showPage('products')">Products</a>
-      <a onclick="showPage('contact')">Contact</a>
+      <a onclick="showPage('home')" href="#">Home</a>
+      <a onclick="showPage('services')" href="#">Services</a>
+      <a onclick="showPage('products')" href="#">Products</a>
+      <a onclick="showPage('contact')" href="#">Contact</a>
     </div>
     <p class="footer-copy">© 2025 Zionoris Technologies · Porto, Portugal</p>
   </div>
 </footer>
 
 <script>
-function showPage(page) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
-  document.getElementById('page-' + page).classList.add('active');
-  document.getElementById('nav-' + page).classList.add('active');
-  window.scrollTo(0,0);
-}
-function openFiverr() {
-  window.open('https://www.fiverr.com/s/bdQpkZX', '_blank');
-}
-function openGumroad() {
-  window.open('https://paulosilvajr.gumroad.com/', '_blank');
-}
+  function showPage(page) {
+    document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+    document.querySelectorAll('.nav-links a').forEach(function(a) { a.classList.remove('active'); });
+    var pg = document.getElementById('page-' + page);
+    var nav = document.getElementById('nav-' + page);
+    if (pg) pg.classList.add('active');
+    if (nav) nav.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  function submitForm() {
+    var name = document.getElementById('name').value;
+    var email = document.getElementById('email').value;
+    var message = document.getElementById('message').value;
+    if (!name || !email || !message) {
+      alert('Please fill in your name, email, and message.');
+      return;
+    }
+    document.querySelector('.form-submit').style.display = 'none';
+    document.getElementById('form-success').style.display = 'block';
+  }
+
+  // Handle browser back/forward with hash
+  window.addEventListener('hashchange', function() {
+    var hash = window.location.hash.replace('#', '') || 'home';
+    var validPages = ['home', 'services', 'products', 'contact'];
+    if (validPages.indexOf(hash) !== -1) showPage(hash);
+  });
+
+  var initHash = window.location.hash.replace('#', '');
+  if (initHash && ['home','services','products','contact'].indexOf(initHash) !== -1) {
+    showPage(initHash);
+  }
 </script>
+</body>
+</html>
