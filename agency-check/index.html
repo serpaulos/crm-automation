@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agency Reporting Automation Check — Zionoris</title>
+<meta name="description" content="12 questions to find out how many billable hours your agency is losing to manual client reporting. Free, 2-minute diagnostic.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EEF2F6;
+    --bg-panel: #FFFFFF;
+    --ink: #1A2332;
+    --ink-soft: #4A5568;
+    --line: #D3DAE3;
+    --line-strong: #AAB8C7;
+    --amber: #E8871E;
+    --amber-dark: #C46F12;
+    --green: #2F9E44;
+    --mono: 'IBM Plex Mono', ui-monospace, monospace;
+    --sans: 'Inter', -apple-system, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--ink); font-family: var(--sans); line-height: 1.5; -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 24px; }
+  .topbar { border-bottom: 1px solid var(--line); padding: 20px 0; }
+  .topbar .wrap { display: flex; justify-content: space-between; align-items: center; }
+  .logo { font-family: var(--mono); font-weight: 600; font-size: 14px; letter-spacing: 0.02em; color: var(--ink); }
+  .logo span { color: var(--amber); }
+  .status-tag { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); border: 1px solid var(--line-strong); border-radius: 3px; padding: 3px 8px; letter-spacing: 0.03em; }
+  .hero { padding: 72px 0 56px; }
+  .eyebrow { font-family: var(--mono); font-size: 12px; color: var(--amber-dark); letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
+  .eyebrow::before { content: ''; width: 6px; height: 6px; background: var(--amber); border-radius: 50%; display: inline-block; }
+  h1 { font-family: var(--mono); font-size: clamp(28px, 5vw, 44px); font-weight: 700; line-height: 1.15; letter-spacing: -0.01em; max-width: 720px; margin-bottom: 20px; }
+  .hero p.sub { font-size: 18px; color: var(--ink-soft); max-width: 560px; margin-bottom: 36px; }
+  .capture { background: var(--bg-panel); border: 1px solid var(--line); border-radius: 8px; padding: 24px; max-width: 460px; }
+  form { display: flex; flex-direction: column; gap: 12px; }
+  label { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.04em; }
+  input[type="text"], input[type="email"] { font-family: var(--sans); font-size: 15px; padding: 12px 14px; border: 1px solid var(--line-strong); border-radius: 5px; background: var(--bg); color: var(--ink); outline: none; transition: border-color 0.15s ease; }
+  input:focus { border-color: var(--amber); box-shadow: 0 0 0 3px rgba(232, 135, 30, 0.15); }
+  button { font-family: var(--mono); font-size: 14px; font-weight: 600; letter-spacing: 0.02em; color: #fff; background: var(--ink); border: none; border-radius: 5px; padding: 14px 20px; cursor: pointer; transition: background 0.15s ease; margin-top: 4px; }
+  button:hover { background: var(--amber-dark); }
+  button:disabled { opacity: 0.6; cursor: default; }
+  .fineprint { font-size: 12px; color: var(--ink-soft); margin-top: 4px; }
+  .form-msg { font-family: var(--mono); font-size: 13px; padding: 10px 12px; border-radius: 5px; display: none; }
+  .form-msg.ok { display: block; background: rgba(47,158,68,0.1); color: var(--green); border: 1px solid rgba(47,158,68,0.3); }
+  .form-msg.err { display: block; background: rgba(200,40,40,0.08); color: #C82828; border: 1px solid rgba(200,40,40,0.25); }
+  .diagram { margin: 64px 0 56px; padding: 32px 24px; background: var(--bg-panel); border: 1px solid var(--line); border-radius: 8px; }
+  .diagram-label { font-family: var(--mono); font-size: 11px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 24px; }
+  svg { display: block; width: 100%; height: auto; }
+  .node-box { fill: var(--bg); stroke: var(--line-strong); stroke-width: 1.5; }
+  .node-out { fill: var(--ink); stroke: var(--ink); }
+  .node-title { font-family: var(--mono); font-size: 13px; font-weight: 600; fill: var(--ink); }
+  .node-sub { font-family: var(--mono); font-size: 10px; fill: var(--ink-soft); }
+  .node-out-title { fill: #fff; font-family: var(--mono); font-size: 13px; font-weight: 600; }
+  .conn { stroke: var(--line-strong); stroke-width: 1.5; stroke-dasharray: 4 4; fill: none; }
+  .dot { fill: var(--amber); }
+  .categories { padding: 8px 0 56px; }
+  h2 { font-family: var(--mono); font-size: 22px; font-weight: 600; margin-bottom: 8px; }
+  .categories > p { color: var(--ink-soft); margin-bottom: 32px; max-width: 560px; }
+  .cat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .cat-card { background: var(--bg-panel); border: 1px solid var(--line); border-radius: 8px; padding: 20px; }
+  .cat-tag { font-family: var(--mono); font-size: 11px; color: var(--amber-dark); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 10px; }
+  .cat-card h3 { font-size: 16px; font-weight: 600; margin-bottom: 8px; }
+  .cat-card p { font-size: 14px; color: var(--ink-soft); }
+  .credibility { border-top: 1px solid var(--line); padding: 40px 0; }
+  .credibility p { font-size: 15px; color: var(--ink-soft); max-width: 640px; }
+  .credibility strong { color: var(--ink); }
+  .bottom-cta { padding: 56px 0 80px; text-align: center; }
+  .bottom-cta h2 { margin-bottom: 12px; }
+  .bottom-cta p { color: var(--ink-soft); margin-bottom: 28px; }
+  .bottom-cta .capture { margin: 0 auto; text-align: left; }
+  footer { border-top: 1px solid var(--line); padding: 24px 0; font-family: var(--mono); font-size: 12px; color: var(--ink-soft); }
+  @media (max-width: 720px) { .cat-grid { grid-template-columns: 1fr; } .hero { padding: 48px 0 40px; } }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="wrap">
+    <div class="logo">zionoris<span>.</span>technologies</div>
+    <div class="status-tag">DIAGNOSTIC · 2 MIN</div>
+  </div>
+</div>
+
+<div class="wrap">
+
+  <section class="hero">
+    <div class="eyebrow">Free reporting audit</div>
+    <h1>Find out how many billable hours your agency is losing to manual client reporting.</h1>
+    <p class="sub">12 questions across report building, data blending, and client customization. Answer honestly, get a scored breakdown, and know exactly which part of your reporting stack to automate first.</p>
+
+    <div class="capture">
+      <form id="lead-form">
+        <label for="name">Name</label>
+        <input type="text" id="name" name="name" placeholder="Your name" required autocomplete="name">
+        <label for="email">Work email</label>
+        <input type="email" id="email" name="email" placeholder="you@agency.com" required autocomplete="email">
+        <button type="submit" id="submit-btn">Send me the audit</button>
+        <div class="fineprint">One email. No spam. Unsubscribe anytime.</div>
+        <div class="form-msg" id="form-msg"></div>
+      </form>
+    </div>
+  </section>
+
+  <section class="diagram">
+    <div class="diagram-label">// how the score is built</div>
+    <svg viewBox="0 0 760 220" xmlns="http://www.w3.org/2000/svg">
+      <path class="conn" d="M 180 40 C 280 40, 300 100, 400 100" />
+      <path class="conn" d="M 180 110 C 280 110, 300 100, 400 100" />
+      <path class="conn" d="M 180 180 C 280 180, 300 100, 400 100" />
+      <circle class="dot" cx="400" cy="100" r="3"/>
+      <rect class="node-box" x="20" y="20" width="180" height="40" rx="5"/>
+      <text class="node-title" x="34" y="36">Report Building</text>
+      <text class="node-sub" x="34" y="52">4 questions</text>
+      <rect class="node-box" x="20" y="90" width="180" height="40" rx="5"/>
+      <text class="node-title" x="34" y="106">Data Blending</text>
+      <text class="node-sub" x="34" y="122">4 questions</text>
+      <rect class="node-box" x="20" y="160" width="180" height="40" rx="5"/>
+      <text class="node-title" x="34" y="176">Client Customization</text>
+      <text class="node-sub" x="34" y="192">4 questions</text>
+      <rect class="node-box node-out" x="440" y="70" width="220" height="60" rx="5"/>
+      <text class="node-out-title" x="456" y="94">Your biggest gap</text>
+      <text class="node-sub" x="456" y="112" fill="#B8C2CE">+ the fix for it</text>
+    </svg>
+  </section>
+
+  <section class="categories">
+    <h2>What gets scored</h2>
+    <p>Each area maps to a specific automation fix — not generic advice.</p>
+    <div class="cat-grid">
+      <div class="cat-card">
+        <div class="cat-tag">01 · Report Building</div>
+        <h3>Time to delivery</h3>
+        <p>How long it actually takes to turn raw data into a report a client can open — and whether anyone tracks that time at all.</p>
+      </div>
+      <div class="cat-card">
+        <div class="cat-tag">02 · Data Blending</div>
+        <h3>Multi-source reliability</h3>
+        <p>Whether your dashboards combine platforms cleanly, or quietly break and go stale until a client notices first.</p>
+      </div>
+      <div class="cat-card">
+        <div class="cat-tag">03 · Client Customization</div>
+        <h3>White-label reuse</h3>
+        <p>Whether every client report runs on the same system, or you're rebuilding from scratch every time you onboard someone new.</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="credibility">
+    <p><strong>Built by an IT automation specialist</strong> with 20 years running systems at IBM, Kyndryl and Euronext Securities — now applied to agency reporting stacks instead of enterprise infrastructure. Same discipline, smaller scale.</p>
+  </section>
+
+  <section class="bottom-cta">
+    <h2>Ready to see your score?</h2>
+    <p>Takes two minutes. Delivered straight to your inbox.</p>
+    <div class="capture">
+      <form id="lead-form-2">
+        <label for="name2">Name</label>
+        <input type="text" id="name2" name="name" placeholder="Your name" required autocomplete="name">
+        <label for="email2">Work email</label>
+        <input type="email" id="email2" name="email" placeholder="you@agency.com" required autocomplete="email">
+        <button type="submit" id="submit-btn-2">Send me the audit</button>
+        <div class="fineprint">One email. No spam. Unsubscribe anytime.</div>
+        <div class="form-msg" id="form-msg-2"></div>
+      </form>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="wrap">zionoris.technologies — reporting automation for agencies</div>
+</footer>
+
+<script>
+  const WEBHOOK_URL = 'https://n8n.zionoris.com/webhook/agency-lead-capture';
+
+  function wireForm(formId, msgId, btnId) {
+    const form = document.getElementById(formId);
+    const msg = document.getElementById(msgId);
+    const btn = document.getElementById(btnId);
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const name = form.querySelector('input[name="name"]').value.trim();
+      const email = form.querySelector('input[name="email"]').value.trim();
+
+      btn.disabled = true;
+      btn.textContent = 'Sending…';
+      msg.className = 'form-msg';
+      msg.textContent = '';
+
+      try {
+        const res = await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name, email })
+        });
+        if (!res.ok) throw new Error('Request failed');
+        msg.classList.add('ok');
+        msg.textContent = 'Check your inbox — the audit is on its way.';
+        form.reset();
+        btn.textContent = 'Sent';
+      } catch (err) {
+        msg.classList.add('err');
+        msg.textContent = 'Something went wrong. Try again, or email contato@zionoris.com directly.';
+        btn.disabled = false;
+        btn.textContent = 'Send me the audit';
+      }
+    });
+  }
+
+  wireForm('lead-form', 'form-msg', 'submit-btn');
+  wireForm('lead-form-2', 'form-msg-2', 'submit-btn-2');
+</script>
+
+</body>
+</html>
